@@ -1,0 +1,13 @@
+.qt_for_python/
+
+example_projects/*.aedtresults/
+*.aedtresults/
+example_projects/*.lock
+__pycache__/
+/**/__pycache__/
+**/__pycache__/
+output/
+build/
+dist/output/
+*.old
+*.spec

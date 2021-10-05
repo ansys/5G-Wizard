@@ -1,0 +1,4 @@
+Job_ID,Project_Name,Design_Name,Solution_Name,Freq,Evaluation_Surface,PD_Type,Averaging_Area,Codebook_Name
+0,5G_28GHz_AntennaModule,4x1_array2,Setup1:LastAdaptive,28GHz,20mm_Surface,PD_n_plus,1cm^2,CodebookExample_Hpol.csv
+1,5G_28GHz_AntennaModule,4x1_array2,Setup1:LastAdaptive,28GHz,20mm_Surface,PD_n_plus,1cm^2,CodebookExample_Hpol_Renormalize.csv
+2,5G_28GHz_AntennaModule,4x1_array2,Setup1:LastAdaptive,28GHz,50mm_Surface,PD_n_plus,4cm^2,CodebookExample_Hpol.csv

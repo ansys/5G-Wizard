@@ -1,0 +1,3 @@
+Job_ID,Project_Name,Design_Name,Solution_Name,Freq,CS_Name,Codebook_Name
+0,5G_28GHz_AntennaModule,4x1_array2,Setup1:LastAdaptive,28GHz,Global,CodebookExample_Hpol.csv
+1,5G_28GHz_AntennaModule,4x1_array2,Setup1:LastAdaptive,28GHz,Global,CodebookExample_Vpol.csv
