@@ -6,8 +6,8 @@ Created on Thu Sep 16 13:24:58 2021
 """
 import sys
 import Lib.Utillities as utils
-from core_pd import PD
-from core_cdf import CDF
+from Lib.core_pd import PD
+from Lib.core_cdf import CDF
 from Lib.Populate_GUI import GUI_Values
 from PySide6.QtWidgets import QMainWindow, QApplication, QWidget,QInputDialog, QHBoxLayout, QVBoxLayout, QDialog,QFileDialog,QCheckBox, QCommandLinkButton
 from gui_v02 import Ui_Dialog
@@ -18,6 +18,8 @@ from Validation import Validate_Reference_Data
 import pyaedt
 from pyaedt import Hfss
 from pyaedt import Desktop
+
+version =  "2021.2"
 
 class MainWindow(QDialog):
     def __init__(self,aedtapp):
@@ -91,7 +93,7 @@ class MainWindow(QDialog):
         self.ui.validation_button.clicked.connect(self.run_validation_button)
 
     def activate_project(self,project_name):
-        self.aedtapp = pyaedt.Hfss(project_name,designname=None)
+        self.aedtapp = pyaedt.Hfss(project_name,designname=None,specified_version=version)
         print('project changed: ' + project_name)
         self.gui_params = GUI_Values(self.aedtapp)
     def project_name_changed(self):
@@ -327,7 +329,7 @@ class MainWindow(QDialog):
             print("selections are not valid")
             return
         wizard = PD(self.aedtapp,output_path=str(self.ui.output_text_path.text()))
-
+        wizard.version = version
         if self.multi_run_enabled:
             wizard.multirun_state = True
             selected_multirun = str(self.ui.multi_run_text.text())
@@ -377,7 +379,7 @@ class MainWindow(QDialog):
             print("selections are not valid")
             return
         wizard = CDF(self.aedtapp,output_path=str(self.ui.output_text_path.text()))
-
+        wizard.version = version
         if self.multi_run_enabled:
             wizard.multirun_state = True
             selected_multirun = str(self.ui.multi_run_text.text())
@@ -425,8 +427,8 @@ class MainWindow(QDialog):
         validation = Validate_Reference_Data()
         validation_results = validation.run()
 if __name__ == '__main__':
-    with Desktop( specified_version="2021.2",new_desktop_session =False,close_on_exit =False):
-        aedtapp = Hfss()
+    with Desktop( specified_version=version,new_desktop_session =False,close_on_exit =False):
+        aedtapp = Hfss(specified_version=version)
     app = QApplication(sys.argv)
     myApp = MainWindow(aedtapp)
     myApp.show()

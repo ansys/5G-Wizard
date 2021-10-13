@@ -42,6 +42,7 @@ class CDF():
     def __init__(self,aedtapp,output_path = './output/'):
         print('Calculating CDF...')
         self.aedtapp = aedtapp
+        self.version = '2021.2'
         self.multirun_state = False
         self.multi_setup_file_path = ''
         self.freq = 28e9
@@ -122,7 +123,7 @@ class CDF():
             
             #read parameters from job dictionary
 
-            self.aedtapp = Hfss(jobs[job]['Project_Name'])
+            self.aedtapp = Hfss(jobs[job]['Project_Name'],specified_version=self.version)
             self.aedtapp.set_active_design(jobs[job]['Design_Name'])
             print('Active Design: ' + jobs[job]['Design_Name'])
             self.solution_type = self.aedtapp.solution_type

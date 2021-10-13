@@ -5,21 +5,21 @@ Created on Fri Sep 17 14:47:02 2021
 @author: asligar
 """
 
-from core_pd import PD
-from core_cdf import CDF
+from Lib.core_pd import PD
+from Lib.core_cdf import CDF
 import Lib.Utillities as utils
-#from AEDTLib.HFSS import HFSS
-#from AEDTLib.Desktop import Desktop
+
 import pyaedt 
 from pyaedt import Hfss
 from pyaedt import Desktop
 from Validation import Validate_Reference_Data
 
+version =  "2021.2"
 
 def run_pd(aedtapp):
     multi_run_enabled = False
     wizard = PD(aedtapp,output_path = './output/')
-    
+    wizard.version = version
     if multi_run_enabled:
         wizard.multirun_state = True
         wizard.multi_setup_file_path = './example_projects/Multi_Setup_Run_PD.csv'
@@ -55,7 +55,7 @@ def run_pd(aedtapp):
 def run_cdf(aedtapp):
     multi_run_enabled = False
     wizard = CDF(aedtapp,output_path = './output/')
-    
+    wizard.version = version
     if multi_run_enabled:
         wizard.multirun_state = True
         wizard.multi_setup_file_path = './example_projects/Multi_Setup_Run_CDF.csv'
