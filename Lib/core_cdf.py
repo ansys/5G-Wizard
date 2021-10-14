@@ -122,14 +122,40 @@ class CDF():
             update_fields = True
             
             #read parameters from job dictionary
-
+            
+            selected_project = jobs[job]['Project_Name']
+            selected_design = jobs[job]['Design_Name']
+            if selected_project not in self.aedtapp.project_list:
+                print('ERROR: Project ' + selected_project + 'Does Not Exist')
+                return False
+            if selected_design not in self.aedtapp.design_list:
+                print('ERROR: Design ' + selected_design + 'Does Not Exist')
+                return False
+            
             self.aedtapp = Hfss(jobs[job]['Project_Name'],specified_version=self.version)
-            self.aedtapp.set_active_design(jobs[job]['Design_Name'])
-            print('Active Design: ' + jobs[job]['Design_Name'])
+            self.aedtapp.set_active_design(selected_design)
+            print('Active Design: ' + selected_design)
             self.solution_type = self.aedtapp.solution_type
             freq = jobs[job]['Freq']
             path_to_codebook = jobs[job]['Codebook_Name']
             setup_name = jobs[job]['Solution_Name']
+
+
+            setup_name = jobs[job]['Solution_Name']
+            setup_name_only = setup_name.split(':')[0]
+            sweep_name_only = setup_name.split(':')[1]
+            
+            if setup_name_only not in self.aedtapp.get_setups():
+                print("ERROR: Setup " + setup_name + " does not exist in design")
+                return False
+            
+            sweeps = self.aedtapp.get_sweeps(setup_name_only)
+            sweeps.append("LastAdaptive")
+            full_setup_names = []
+
+            if sweep_name_only not in sweeps:
+                print("ERROR: Setup " + setup_name + ":" + sweep_name_only +  " does not exist in design")
+                return False
 
             #write out information related to the job
             job_summary_name =  'job_summary.json'
@@ -171,7 +197,9 @@ class CDF():
                                            export_path=save_path,
                                            overwrite=update_fields)
             
-
+            if not ffd_files_dict:
+                print("ERROR: Far field data not exported, verify design has a solution")
+                return False
             
             #set edit sources back to values that represent codebook, this allows fields to be seen in AEDT
             #codebook.edit_sources(current_edit_sources_status)
@@ -180,6 +208,9 @@ class CDF():
             #Load Fields from nfd files
             #this just reads the data from file into memory
             fields_data = Load_FF_Fields(ffd_files_dict)
+            if not fields_data.valid_ffd:
+                print("ERROR: Far field data not exported, verify design has a solution")
+                return False
             fields_data.solution_type = self.solution_type
             
             #renormalization is not applied to individiual runs in with multi-run state
@@ -290,7 +321,7 @@ class CDF():
                                 dB=True)
         self.restore_desktop_settings()
         print('Done')
-
+        return True
 
         #we don't have to do this, but we can create the same reports in AEDT, 
         # that way the are linked to design variaions

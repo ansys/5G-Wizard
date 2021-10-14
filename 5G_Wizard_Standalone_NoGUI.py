@@ -37,7 +37,7 @@ def run_pd(aedtapp):
         #selected_eval_surf = '25mm_Surface'
         selected_area = '1cm^2' #area in cm^2 as a string
         selected_pd_type = 'PD_n_plus'
-        renormalize = True
+        renormalize = False
         renorm_values= [1,.5,1,.5,.1]
     
         wizard.freq = selected_freq
@@ -70,7 +70,7 @@ def run_cdf(aedtapp):
         renormalize_dB = False
         renorm_value= 10
         
-        codebook_path = './example_projects/CodebookExample_Vpol.csv'
+        codebook_path = './example_projects/CodebookExample_Hpol.csv'
 
         cs_name = 'Global'
         
@@ -94,8 +94,8 @@ def run_validate():
     validation_results = validation.run()
 
 if __name__ == '__main__':
-    with Desktop(specified_version="2021.2",new_desktop_session =False,close_on_exit =False):
-        aedtapp = Hfss()
+    with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
+        aedtapp = Hfss(specified_version=version)
 
     run_pd(aedtapp)
     run_cdf(aedtapp)

@@ -25,6 +25,11 @@ class FarField_Utils():
         if cs_name not in existing_cs_names:
             print('WARNING: ' + cs_name + ' Does not exist in Design. Check Setup. Using Global')
             cs_name='Global'
+            
+        oModule = oDesign.GetModule("BoundarySetup")
+        does_rad_exist = oModule.GetBoundariesOfType('radiation')
+        if len(does_rad_exist)==0:
+            return False
         oModule = oDesign.GetModule("RadField")
         exisiting_setups = oModule.GetSetupNames('Infinite Sphere')
         original_setup_name =setup_name
@@ -78,9 +83,13 @@ class FarField_Utils():
         #sweeps=['Theta:=',['All'],'Phi:=',['All'],'Freq:=',[freq]]
         sweeps=['Freq:=',[freq]]
         for qty in qtys:
-            solnData = oModule.GetSolutionDataPerVariation('Antenna Parameters', sol_setup_name, ctxt, sweeps, qty)
-            data = solnData[0].GetRealDataValues(qty)
-            max_antenna_params_dict[qty] = data[0]
+            try:
+                solnData = oModule.GetSolutionDataPerVariation('Antenna Parameters', sol_setup_name, ctxt, sweeps, qty)
+                data = solnData[0].GetRealDataValues(qty)
+                max_antenna_params_dict[qty] = data[0]
+            except:
+                print("ERROR: exporting antenna parameters failed")
+                return False
 
         return max_antenna_params_dict
     
@@ -119,21 +128,23 @@ class FarField_Utils():
                 "SolutionName:="    , setup_name
             ])
         
-        
-        with open(export_path + '/' + exported_name_map, 'r') as reader:
-            lines = [line.split(None) for line in reader]
-        reader.close()
-        lines=lines[1:] #remove header
-        
-        path_dict={}
-        for pattern in lines:
-            if len(pattern)==2:
-                port = pattern[0]
-                if ':' in port:
-                    port = port.split(':')[0]
-                path_dict[port]=export_path + '/' + pattern[1]+ '.ffd'
-
-        return path_dict
+        if os.path.exists(export_path + '/' + exported_name_map):
+            with open(export_path + '/' + exported_name_map, 'r') as reader:
+                lines = [line.split(None) for line in reader]
+            reader.close()
+            lines=lines[1:] #remove header
+            
+            path_dict={}
+            for pattern in lines:
+                if len(pattern)==2:
+                    port = pattern[0]
+                    if ':' in port:
+                        port = port.split(':')[0]
+                    path_dict[port]=export_path + '/' + pattern[1]+ '.ffd'
+    
+            return path_dict
+        else:
+            return False
     
 
     

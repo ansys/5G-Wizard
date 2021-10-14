@@ -6,7 +6,7 @@ Created on Tue Sep  7 15:50:47 2021
 """
 import numpy as np
 import time as walltime
-
+import os
 
 
 class Load_FF_Fields():
@@ -43,50 +43,59 @@ class Load_FF_Fields():
         '''
         self.data_dict = {}
 
-
+        valid_ffd = True
         all_ports = list(ffd_dict.keys())
-        with open(ffd_dict[all_ports[0]], 'r') as reader:
-            theta=[int(i) for i in reader.readline().split()] 
-            phi=[int(i) for i in reader.readline().split()]
-            num_freq=int(reader.readline().split()[1])
-            frequency=float(reader.readline().split()[1])
-        reader.close()
-        results_dict = {}
-        for port in ffd_dict.keys():
-            if ':' in port:
-                port = port.split(':')[0]
-            temp_dict = {}
-            theta_range=np.linspace(*theta)
-            phi_range= np.linspace(*phi)
+        if os.path.exists(ffd_dict[all_ports[0]]):
+            with open(ffd_dict[all_ports[0]], 'r') as reader:
+                theta=[int(i) for i in reader.readline().split()] 
+                phi=[int(i) for i in reader.readline().split()]
+                num_freq=int(reader.readline().split()[1])
+                frequency=float(reader.readline().split()[1])
+            reader.close()
+            results_dict = {}
+            for port in ffd_dict.keys():
+                if ':' in port:
+                    port = port.split(':')[0]
+                temp_dict = {}
+                theta_range=np.linspace(*theta)
+                phi_range= np.linspace(*phi)
+                
+                ntheta=len(theta_range)
+                nphi=len(phi_range)
+                
+                if os.path.exists(ffd_dict[port]):
+                    eep_txt=np.loadtxt(ffd_dict[port], skiprows=4)
+                    Etheta=np.vectorize(complex)(eep_txt[:,0], eep_txt[:,1])
+                    Ephi=np.vectorize(complex)(eep_txt[:,2], eep_txt[:,3])
+                    
+                    #eep=np.column_stack((etheta, ephi))  
+                    
+                    temp_dict['Theta']=theta_range
+                    temp_dict['Phi'] = phi_range
+                    temp_dict['rETheta']=Etheta
+                    temp_dict['rEPhi']=Ephi
+                    
+                    self.data_dict[port]=temp_dict
+                else:
+                    valid_ffd=False
+                
+            #differential area of sphere, based on observation angle
+            self.d_theta = np.abs(theta_range[1]-theta_range[0])
+            self.d_phi = np.abs(phi_range[1]-phi_range[0])
+            self.diff_area=np.radians(self.d_theta)*np.radians(self.d_phi)*np.sin(np.radians(theta_range)) 
+            self.num_samples = len(temp_dict['rETheta'])
+            self.all_port_names = list(results_dict.keys())
+            self.solution_type = 'DrivenModal'
+            self.unique_beams = None
             
-            ntheta=len(theta_range)
-            nphi=len(phi_range)
-            
-            eep_txt=np.loadtxt(ffd_dict[port], skiprows=4)
-            Etheta=np.vectorize(complex)(eep_txt[:,0], eep_txt[:,1])
-            Ephi=np.vectorize(complex)(eep_txt[:,2], eep_txt[:,3])
-            
-            #eep=np.column_stack((etheta, ephi))  
-            
-            temp_dict['Theta']=theta_range
-            temp_dict['Phi'] = phi_range
-            temp_dict['rETheta']=Etheta
-            temp_dict['rEPhi']=Ephi
-            
-            self.data_dict[port]=temp_dict
-            
-        #differential area of sphere, based on observation angle
-        self.d_theta = np.abs(theta_range[1]-theta_range[0])
-        self.d_phi = np.abs(phi_range[1]-phi_range[0])
-        self.diff_area=np.radians(self.d_theta)*np.radians(self.d_phi)*np.sin(np.radians(theta_range)) 
-        self.num_samples = len(temp_dict['rETheta'])
-        self.all_port_names = list(results_dict.keys())
-        self.solution_type = 'DrivenModal'
-        self.unique_beams = None
-        
-        self.renormalize = False
-        self.renormalize_dB = True
-        self.renorm_value= 1
+            self.renormalize = False
+            self.renormalize_dB = True
+            self.renorm_value= 1
+        else:
+            valid_ffd=False
+            print('ERROR: Far Field Files are Missing')
+    
+        self.valid_ffd = valid_ffd
     
     def combine_fields(self,vector,reshape=None,relative_phase_beam_id=0):
         '''

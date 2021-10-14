@@ -12,7 +12,7 @@
 
 import csv
 import os
-
+import sys
 class Codebook_Utils():
     def __init__(self,aedtapp,file_name):
         '''
@@ -154,7 +154,15 @@ class Codebook_Utils():
                 "IncludePortPostProcessing:=", False,"SpecifySystemPower:=", False])
         else:
             sources.append(["IncludePortPostProcessing:=", False,"SpecifySystemPower:=", False])
+        
+        valid_codebook =True
+        if not self.port_check(): #codebook is not valid, will try to import valid port and ignore the rest
+            valid_codebook =False
             
+        self.port_names_in_codebook
+        if not valid_codebook:#modify ports from codebook to only include ones that exist in the design
+            name_array = list(set(self.all_ports_in_design).intersection(self.port_names_in_codebook))
+                
         for count, excite in enumerate(name_array):
             sources.append(["Name:=", excite,"Magnitude:=", 
                 str(mag_array[count]),"Phase:=", str(phase_array[count]) ])
@@ -308,15 +316,41 @@ class Codebook_Utils():
 
 
         ports_in_design = self.aedtapp.get_all_sources()
+        valid_port = True
+        ports_modified = []
         for port in self.port_names_in_codebook:
             if port not in ports_in_design:
-                print('check port names in codebook:')
-                print('codebook port ' + port + ', is not in design')
-                return False
-        print('allclear')
+                #print('check port names in codebook:')
+                print('WARNING: codebook contains port ' + port + ', and it is not included in the design')
+                beams = self.input_vector.keys()
+                for beam in beams: #remove any keys that don't exist in codebook
+                    del(self.input_vector[beam]['ports'][port])
+                valid_port=False
+            else:
+                ports_modified.append(port)
+        if not valid_port:
+            #actual port names between codebook and in design are not correct
+            #modifying the port names so they don't get used
+            self.port_names_in_codebook  = ports_modified
+            print('*******************************************************************')
+            print('*******************************************************************')
+            print('*******************************************************************')
+            print('* ')
+            print(' WARNING: codebook is not valid, attempting to only excite ports that exists in the design')
+            print(' VERIFY CODEBOOK!')
+            print('* ')
+            print('*******************************************************************')
+            print('*******************************************************************')
+            print('*******************************************************************')
+            if len(self.port_names_in_codebook)==0:
+                print('Ports in codebook do not exist in design')
+                sys.exit()
+            return False
+        else:
+            return True
+            print('Codebook is Valid')
         
 
-        return True
     
     def codebook_import(self,update_datasets=True,update_editsources=True,use_beam_pair=True):
 
@@ -346,7 +380,9 @@ class Codebook_Utils():
     
         returns controls that give mag/phase for each port for given beam id
         """
-        self.port_check()
+
+
+            
         self.all_ports_in_design = self.aedtapp.get_all_sources()
 
     

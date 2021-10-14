@@ -51,7 +51,11 @@ class NearField_Utils():
         oDesign = self.aedtapp.odesign
         oEditor = oDesign.SetActiveEditor("3D Modeler")
     
-        object_id = oEditor.GetObjectIDByName(sheet_name)
+        object_ids = oEditor.GetMatchedObjectName(sheet_name)
+        if len(object_ids)==0:
+            print("ERROR: Surface " + sheet_name + " does not exist")
+            return False
+            
         face_id = oEditor.GetFaceIDsOfSheet(sheet_name)
         face_id =face_id[0] #should only be 1 face
     
@@ -271,6 +275,11 @@ class NearField_Utils():
             print("create_cs_sheet_center() needs to be run before generate_nearfield_setup() can be run")
             return False
         oDesign = self.aedtapp.odesign
+        
+        oModule = oDesign.GetModule("BoundarySetup")
+        does_rad_exist = oModule.GetBoundariesOfType('radiation')
+        if len(does_rad_exist)==0:
+            return False
         oModule = oDesign.GetModule("RadField")
     
         self.length_n = length_n

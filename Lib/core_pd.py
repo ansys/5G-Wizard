@@ -133,13 +133,39 @@ class PD():
             if pd_type.lower() in ['pd_n+','pd_tot+','pd_mod+']:
                 pd_type = pd_type_map[pd_type.lower()]
             
-            self.aedtapp = Hfss(jobs[job]['Project_Name'],specified_version=self.version)
-            self.aedtapp.set_active_design(jobs[job]['Design_Name'])
-            print('Active Design: ' + jobs[job]['Design_Name'])
+            selected_project = jobs[job]['Project_Name']
+            selected_design = jobs[job]['Design_Name']
+            if selected_project not in self.aedtapp.project_list:
+                print('ERROR: Project ' + selected_project + 'Does Not Exist')
+                return False
+            if selected_design not in self.aedtapp.design_list:
+                print('ERROR: Design ' + selected_design + 'Does Not Exist')
+                return False
+            self.aedtapp = Hfss(selected_project,specified_version=self.version)
+            self.aedtapp.set_active_design(selected_design)
+            print('Active Design: ' + selected_design)
             self.solution_type = self.aedtapp.solution_type
+            
             freq = jobs[job]['Freq']
+            
             path_to_codebook = jobs[job]['Codebook_Name']
+            
             setup_name = jobs[job]['Solution_Name']
+            setup_name_only = setup_name.split(':')[0]
+            sweep_name_only = setup_name.split(':')[1]
+            
+            if setup_name_only not in self.aedtapp.get_setups():
+                print("ERROR: Setup " + setup_name + " does not exist in design")
+                return False
+            
+            sweeps = self.aedtapp.get_sweeps(setup_name_only)
+            sweeps.append("LastAdaptive")
+            full_setup_names = []
+
+            if sweep_name_only not in sweeps:
+                print("ERROR: Setup " + setup_name + ":" + sweep_name_only +  " does not exist in design")
+                return False
+            
             surface_name = jobs[job]['Evaluation_Surface']
             averaging_area = jobs[job]['Averaging_Area']
             
@@ -153,10 +179,12 @@ class PD():
             #create near field setup
             
             nearfield_setup = NearField_Utils(self.aedtapp)
-            cs_name = nearfield_setup.create_cs_sheet_center(surface_name)
             
+            cs_name = nearfield_setup.create_cs_sheet_center(surface_name)
+            if not cs_name:
+                return False
             #sample space shoudl be 1mm or lambda/10, whichever is less
-            lambda_by_ten = wl/10 #should be wl/10, using wl/2 for testing
+            lambda_by_ten = wl/10 #should be wl/10
             if lambda_by_ten>1e-3:
                 grid_size = 1e-3
             else:
@@ -170,10 +198,14 @@ class PD():
             #this can happen becuase of length/grid size does not equal integer value
             #use_true_size=False will strictly follow the grid size defined and may extend
             #slightly beyond the user defined rectangle, but never shrink it
+
             nf_setup_name = nearfield_setup.generate_nearfield_setup("nf_setup_name",
-                                                                     cs_name,
-                                                                     grid_size = grid_size,
-                                                                     use_true_size=False)
+                                                                         cs_name,
+                                                                         grid_size = grid_size,
+                                                                         use_true_size=False)
+            if not nf_setup_name:
+                print('ERROR: Unable to insert near field setup, make sure design has an ABC/PML boundary')
+                return False
             
             
             #export fields, save to results directory with some sub folders
@@ -188,7 +220,7 @@ class PD():
             #only export port names that exist in the codebook, helpful in cases where
             #multiple modules exist in the design but are not being used for evaluation
             port_names_to_export = codebook.port_names_in_codebook
-            
+
             
             #exctract antenna parameters (ie peak gain, radiated power...etc)
             
@@ -202,7 +234,9 @@ class PD():
                 ant_param_dict[beam_id] = farfield_setup.get_antenna_parameters(setup_name,
                                                                        farfield_setup.name,
                                                                        freq)
-
+                if not ant_param_dict[beam_id]:
+                    print('ERROR: Unable to get solution data, make sure solution exists')
+                    return False
             #rearragne the antenna parameters
             #right now they are in format data[job][antenna_params][beam_id]
             #just so it is easy to sort the data later I am unnesting them
@@ -438,4 +472,5 @@ class PD():
         
         self.restore_desktop_settings()
         print('Done')
+        return True
         

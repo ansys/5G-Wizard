@@ -6,7 +6,7 @@ Created on Tue Sep  7 15:50:47 2021
 """
 import numpy as np
 import time as walltime
-
+import os
 
 
 class Load_NF_Fields():
@@ -41,7 +41,7 @@ class Load_NF_Fields():
         for each port
 
         '''
-        
+        valid_nfd=True
         #the positions output from the nfd format give values in global CS
         #it is easier to work with values in local CS, so calculating here
         pos = np.zeros((length_n*width_n,3))
@@ -63,7 +63,10 @@ class Load_NF_Fields():
                 temp_dict = {}
     
                 print('loading port: ' + port)
-                data = np.loadtxt(file,skiprows=3,delimiter=',')
+                if os.path.exists(file):
+                    data = np.loadtxt(file,skiprows=3,delimiter=',')
+                else:
+                    valid_nfd=False
                 #pos = data[:,1:4]
                 #e_fields = data[:,4:10]
                 #h_fields = data[:,10:16]
@@ -91,6 +94,7 @@ class Load_NF_Fields():
         self.prad= []
         self.renorm_values= []
 
+        self.valid_nfd = valid_nfd
         
     def combine_fields(self,vector,reshape=None,relative_phase_beam_id=0):
         '''
