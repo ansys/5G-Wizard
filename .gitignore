@@ -11,3 +11,4 @@ build/
 dist/output/
 *.old
 *.spec
+test.py

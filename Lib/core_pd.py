@@ -19,6 +19,7 @@ from Lib.FarFieldsProcessing import envelope_pattern_all_jobs
 from Lib.Reporter import Report_Module
 from Lib.MultiSetup import Read_Multi_Setup
 from Lib.CreateReports_in_AEDT import AEDT_CreateReports
+from Lib.Html_Report import Html_Writer
 import Lib.Utillities as utils
 
 from pyaedt import Hfss
@@ -389,7 +390,7 @@ class PD():
             pd_max_dict['AcceptedPower'] = accepted_power 
             pd_max_dict['IncidentPower'] = incident_power
 
-
+            pd_max_dict['JobID']  = job
             
             pd_max_local = fields_data.get_max_for_each_beam(pd_local,label='Local') #label is just to display in console
             
@@ -406,8 +407,8 @@ class PD():
             if self.multirun_state:
                 show_plots = False
             #plotting peak values versus beam id
-            save_name = 'max_'+ pd_type + '_bar_' + report_name_base_str
-            full_path = reports.max_vs_beam_bar(pd_max,save_name=save_name,save_plot=True,show_plot = show_plots)
+            # save_name = 'max_'+ pd_type + '_bar_' + report_name_base_str
+            # full_path = reports.max_vs_beam_bar(pd_max,save_name=save_name,save_plot=True,show_plot = show_plots)
             
 
 
@@ -430,23 +431,23 @@ class PD():
                 reports.close_all_reports()
             
             #plot the local PD for every beamID
-            for beam in pd_local.keys():
-                pd = pd_local[beam]
-                plot_title = 'Local Power Density: Beam ID ' + str(beam)
-                save_name = 'local_' + pd_type + '_beamid_' + str(beam) + '_' +report_name_base_str
-                reports.plot_pd(pd,
-                                fields_data.pos,
-                                title=plot_title, 
-                                save_plot=True,
-                                save_name=save_name)
-            if self.multirun_state:
-                reports.close_all_reports()
-            save_name = 'max_pd_local_line_' + report_name_base_str
-            reports.max_vs_beam_line(pd_max_local,
-                                        save_name=save_name,
-                                        save_plot=True,
-                                        title='PD Max Local',
-                                        show_plot = show_plots)       
+            # for beam in pd_local.keys():
+            #     pd = pd_local[beam]
+            #     plot_title = 'Local Power Density: Beam ID ' + str(beam)
+            #     save_name = 'local_' + pd_type + '_beamid_' + str(beam) + '_' +report_name_base_str
+            #     reports.plot_pd(pd,
+            #                     fields_data.pos,
+            #                     title=plot_title, 
+            #                     save_plot=True,
+            #                     save_name=save_name)
+            # if self.multirun_state:
+            #     reports.close_all_reports()
+            # save_name = 'max_pd_local_line_' + report_name_base_str
+            # reports.max_vs_beam_line(pd_max_local,
+            #                             save_name=save_name,
+            #                             save_plot=True,
+            #                             title='PD Max Local',
+            #                             show_plot = show_plots)       
             if self.multirun_state:
                 reports.close_all_reports()
             
@@ -456,11 +457,13 @@ class PD():
             #savwe all data to single dict, will be written to json later
             pd_max_dict_all_jobs[job] = pd_max_dict
     
-        save_name = 'PD_Summary_Table'
-        reports.pd_table(pd_max_dict_all_jobs,
-                         save_plot=True,
-                         save_name=save_name,
-                         override_path =self.base_output_path )
+
+            
+        # save_name = 'PD_Summary_Table'
+        # reports.pd_table(pd_max_dict_all_jobs,
+        #                  save_plot=True,
+        #                  save_name=save_name,
+        #                  override_path =self.base_output_path )
         
         if self.multirun_state:
                 reports.close_all_reports()
@@ -472,5 +475,12 @@ class PD():
         
         self.restore_desktop_settings()
         print('Done')
+        
+        self.pd_max_dict_all_jobs = pd_max_dict_all_jobs
+        
+        for job_id_temp in self.pd_max_dict_all_jobs.keys():
+            html_out = Html_Writer(self.base_output_path,'Summary_Job_' +str(job_id_temp))
+            html_out.generate_html(pd_max_dict_all_jobs[job_id_temp])
+        
         return True
         

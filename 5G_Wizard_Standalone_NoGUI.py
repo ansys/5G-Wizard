@@ -51,7 +51,7 @@ def run_pd(aedtapp):
         wizard.renormalize = renormalize
         wizard.renorm_values = renorm_values
     wizard.run_pd()
-
+    return wizard
 def run_cdf(aedtapp):
     multi_run_enabled = False
     wizard = CDF(aedtapp,output_path = './output/')
@@ -97,6 +97,11 @@ if __name__ == '__main__':
     with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
         aedtapp = Hfss(specified_version=version)
 
-    run_pd(aedtapp)
-    run_cdf(aedtapp)
+    wizard_pd = run_pd(aedtapp)
+    #wizard_cdf = run_cdf(aedtapp)
     #run_validate()
+    
+    
+
+    
+    

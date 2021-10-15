@@ -1,0 +1,109 @@
+BODY {
+	WIDTH: 100%; BACKGROUND: url(bg-page1.jpg) #f3b62a no-repeat 50% 0px; TEXT-ALIGN: center; MARGIN: 0px auto
+}
+.article {
+	WIDTH: 988px; BACKGROUND: url(bg-content.png) repeat-y 0px 50%; POSITION: relative; PADDING-BOTTOM: 0px; TEXT-ALIGN: left; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 0px auto; PADDING-RIGHT: 0px
+}
+.titlepage {
+	BACKGROUND: url(bg-page1.jpg) #f3b62a no-repeat 50% 0px; COLOR: #323232
+}
+.section .titlepage {
+	BACKGROUND: none transparent scroll repeat 0% 0%
+}
+.toc {
+	PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 20px; PADDING-RIGHT: 20px
+}
+.toc P {
+	FONT-SIZE: 15px; WIDTH: 200px; BACKGROUND: url(yellow-box-featurebox-right.gif) #ecc73f no-repeat 100% 60%; FONT-WEIGHT: bold; COLOR: #000000; PADDING-BOTTOM: 4px; PADDING-TOP: 4px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px
+}
+H2.title {
+	FONT-SIZE: 15px; WIDTH: 200px; BACKGROUND: url(yellow-box-featurebox-right.gif) #ecc73f no-repeat 100% 60%; FONT-WEIGHT: bold; COLOR: #000000; PADDING-BOTTOM: 4px; PADDING-TOP: 4px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px
+}
+.toc DL {
+	BORDER-TOP: #ecc73f 1px solid; BORDER-RIGHT: #ecc73f 1px solid; WIDTH: 198px; BORDER-BOTTOM: #ecc73f 1px solid; POSITION: relative; COLOR: #2e75c5; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 10px; BORDER-LEFT: #ecc73f 1px solid; MARGIN: 5px 0px 0px; PADDING-RIGHT: 10px
+}
+.section {
+	OVERFLOW: hidden; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 20px; PADDING-RIGHT: 20px
+}
+.toc .section {
+	PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px
+}
+.toc A {
+	OVERFLOW: hidden; TEXT-DECORATION: none; COLOR: #2e75c5; OUTLINE-WIDTH: medium; OUTLINE-STYLE: none; OUTLINE-COLOR: invert
+}
+A:link {
+	OVERFLOW: hidden; TEXT-DECORATION: none; COLOR: #2e75c5; OUTLINE-WIDTH: medium; OUTLINE-STYLE: none; OUTLINE-COLOR: invert
+}
+A:visited {
+	OVERFLOW: hidden; TEXT-DECORATION: none; COLOR: #2e75c5; OUTLINE-WIDTH: medium; OUTLINE-STYLE: none; OUTLINE-COLOR: invert
+}
+.toc A:hover {
+	TEXT-DECORATION: underline
+}
+.toc B {
+	COLOR: black
+}
+.table {
+	BORDER-TOP: black 2px solid
+}
+.table-contents {
+	BORDER-TOP: #ecc73f 1px solid; BORDER-RIGHT: #ecc73f 1px solid; WIDTH: 90%; BORDER-BOTTOM: #ecc73f 1px solid; BORDER-LEFT: #ecc73f 1px solid
+}
+.table-contents TABLE {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; BORDER-LEFT: 0px
+}
+TD {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; BORDER-LEFT: 0px
+}
+TH {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; BORDER-LEFT: 0px
+}
+TR {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: 0px; BORDER-LEFT: 0px
+}
+.table-contents TABLE {
+	FONT-SIZE: 12px; WIDTH: 100%; BORDER-COLLAPSE: collapse
+}
+.table-contents TH {
+	FONT-SIZE: 13px; BACKGROUND: #ddd; BORDER-BOTTOM: #ecc73f 1px solid; FONT-WEIGHT: normal; COLOR: black; PADDING-BOTTOM: 8px; PADDING-TOP: 8px; PADDING-LEFT: 8px; PADDING-RIGHT: 8px
+}
+.table-contents TD {
+	BORDER-TOP: transparent 1px solid; BORDER-BOTTOM: #ecc73f 1px solid; FONT-WEIGHT: normal; COLOR: black; PADDING-BOTTOM: 8px; PADDING-TOP: 8px; PADDING-LEFT: 8px; PADDING-RIGHT: 8px
+}
+TR.hoverClass TD {
+	BACKGROUND: #aaa; COLOR: white
+}
+TD.pass {
+	FONT-WEIGHT: bold; COLOR: green
+}
+TD.fail {
+	FONT-WEIGHT: bold; COLOR: red
+}
+TD.fail A {
+	FONT-WEIGHT: bold; COLOR: red
+}
+TD.fail A:visited {
+	FONT-WEIGHT: bold; COLOR: red
+}
+.figure {
+	MAX-WIDTH: 50%; POSITION: relative; FLOAT: left; PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; MARGIN-LEFT: 20px; PADDING-RIGHT: 10px
+}
+BR.figure-break {
+	DISPLAY: none
+}
+DIV.table {
+	CLEAR: both
+}
+.literallayout {
+	WORD-WRAP: break-word; TEXT-ALIGN: justify
+}
+
+
+
+.table__row:nth-child(even) {
+	background-color: #e5e5e5;
+}
+.table__header {
+	text-align:right;
+}
+
