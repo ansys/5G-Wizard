@@ -13,9 +13,13 @@ from datetime import date
 
 
 class Report_Module():
-    def __init__(self,aedtapp,output_path,overwrite=True):
+    def __init__(self,aedtapp,output_path,overwrite=True,job_id='0'):
+        
+        self.full_path = output_path  + 'JobID_' + str(job_id) + '/'
+        self.relative_path = './JobID_' + str(job_id) + '/'
+        self.output_path = output_path
         self.aedtapp = aedtapp
-        self.output_path =output_path
+
         self.overwrite = overwrite
         self.all_figure_paths = []
         plt.close('all')
@@ -39,9 +43,10 @@ class Report_Module():
         plt.ylabel(pd_type_label)
         plt.title(title)
         if save_plot:
-            save_name = self.output_path + save_name + '.png'
+            save_name = self.full_path + save_name + '.png'
+            save_name_relative = self.relative_path + save_name + '.png'
             plt.savefig(save_name,dpi=300)
-            self.all_figure_paths.append(save_name)
+            self.all_figure_paths.append(save_name_relative)
         if show_plot:
             plt.show()
             
@@ -65,9 +70,10 @@ class Report_Module():
         ax.grid()
         
         if save_plot:
-            save_name = self.output_path + save_name + '.png'
-            plt.savefig(save_name,dpi=300)
-            self.all_figure_paths.append(save_name)
+            save_name_full = self.full_path + save_name + '.png'
+            save_name_relative = self.relative_path + save_name + '.png'
+            plt.savefig(save_name_full,dpi=300)
+            self.all_figure_paths.append(save_name_relative)
         if show_plot:
             plt.show()
             
@@ -93,9 +99,10 @@ class Report_Module():
         #plt.axis('off')
         
         if save_plot:
-            save_figure_name =  save_name+ '.png'
-            plt.savefig(self.output_path +save_figure_name,dpi=300)
-            self.all_figure_paths.append(self.output_path +save_figure_name)
+            save_name_full = self.full_path + save_name + '.png'
+            save_name_relative = self.relative_path + save_name + '.png'
+            plt.savefig(save_name_full,dpi=300)
+            self.all_figure_paths.append(save_name_relative)
         if not show_plot:
             plt.close('all')
 
@@ -226,16 +233,15 @@ class Report_Module():
         fig = plt.gcf()
         
         if save_plot:
-            save_figure_name =  save_name+ '.png'
-            plt.savefig(output_path +save_figure_name,
+            save_name_full = self.full_path + save_name + '.png'
+            save_name_relative = self.relative_path + save_name + '.png'
+            plt.savefig(save_name_full,
                         #bbox='tight',
                         edgecolor=fig.get_edgecolor(),
                         facecolor=fig.get_facecolor(),
                         dpi=300
                         )
-
-
-            self.all_figure_paths.append(output_path +save_figure_name)
+            self.all_figure_paths.append(save_name_relative)
             
 
 
@@ -277,13 +283,12 @@ class Report_Module():
 
         print('Peak '+ qty_str + ': ' +  str(np.max(qty_to_plot)))
 
-        if output_path =='':
-            output_path = self.output_path
-        
+
         if save_plot:
-            save_figure_name =  save_name+ '.png'
-            plt.savefig(output_path +save_figure_name,dpi=300)
-            self.all_figure_paths.append(output_path +save_figure_name)
+            save_name_full = self.full_path + save_name + '.png'
+            save_name_relative = self.relative_path + save_name + '.png'
+            plt.savefig(save_name_full,dpi=300)
+            self.all_figure_paths.append(save_name_relative)
         if not show_plot:
             plt.close('all')
     def polar_plot(self,data, qty_str,title=''):
@@ -331,12 +336,17 @@ class Report_Module():
                title=title)
         ax.grid()
         
-        if output_path =='':
+        if output_path  == '':
             output_path = self.output_path
-            
-            
+        else:
+            output_path = self.full_path
+
+
         if save_plot:
-            plt.savefig(output_path + save_name + '.png',dpi=300)
-            self.all_figure_paths.append(output_path + save_name + '.png')
+           
+            save_name_full = self.full_path + save_name + '.png'
+            save_name_relative = self.relative_path + save_name + '.png'
+            plt.savefig(save_name_full,dpi=300)
+            self.all_figure_paths.append(save_name_relative)
         if show_plot:
             plt.show()

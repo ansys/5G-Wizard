@@ -8,10 +8,11 @@ Created on Tue Sep 14 08:25:07 2021
 import os
 import csv
 import Lib.Utillities as utils
+from pyaedt import Hfss
 import sys
 class Read_Multi_Setup():
-    def __init__(self,file_name,calc_type=''):
-        
+    def __init__(self,file_name,calc_type='',version =  "2021.2"):
+        self.version =  version
         jobs = {}
         
         if not os.path.exists(file_name):
@@ -99,9 +100,15 @@ class Read_Multi_Setup():
                 print('Codebook location should be relative or in same location as multi_run file')
                 return False
             
-            if self.jobs[job]['Design_Name'] not in aedtapp.design_list:
-                print('Design ' + self.jobs[job]['Design_Name'] + " does not exist")
+            if self.jobs[job]['Project_Name'] not in aedtapp.project_list:
+                print('ERROR: Project ' + selected_project + 'Does Not Exist')
                 return False
+            else:
+                aedtapp = Hfss(self.jobs[job]['Project_Name'],specified_version=self.version)
+            if self.jobs[job]['Design_Name'] not in aedtapp.design_list:
+                print('ERROR: Design ' + selected_design + 'Does Not Exist')
+                return False
+            
             
             solution = self.jobs[job]['Solution_Name'].split(':')
             setup_name = solution[0].strip()

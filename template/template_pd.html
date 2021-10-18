@@ -1,0 +1,62 @@
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>PD Summary Report</title>
+	<link rel="stylesheet" type="text/css" href="static/styles.css"/>
+</head>
+<body >
+<DIV title="Design Summary" class=section>
+<DIV>
+<H1 class=title><A name=ID0ED><SPAN class=inlinemediaobject><IMG 
+src="static/ANSYS.png" height=100></SPAN> </H1></DIV></DIV>
+<H1 class=title><A name=ID0ED> <SPAN 
+class=bold><STRONG>{{title}}</STRONG></SPAN> </H1></DIV></DIV>
+	<table class="table">
+	
+		{% for design in design_summary %}
+		<TR class="table__row">
+			<TH class ="table__row"> {{design }}</TH>
+			<TD class ="table__row"> {{design[loop.index0]}}</TD>
+		</TR>
+		{% endfor %}
+	</table>
+
+<H2 class=title style="CLEAR: both"><A 
+name=ID0E6C>Design Information</H2></DIV></DIV></DIV>
+	<table class="table">
+		{% for header in headings_pd_summary %}
+		<TR class="table__row">
+			<TH class ="table__row"> {{header }}</TH>
+			<TD class ="table__row"> {{data_pd_summary[loop.index0]}}</TD>
+		</TR>
+		{% endfor %}
+	</table>
+	
+<H2 class=title style="CLEAR: both"><A 
+name=ID0E6C>Power Density Summary</H2></DIV></DIV></DIV>
+
+	<table class="table" style="width:90%">
+		
+		<TR class="table__header">
+			{% for header in headings_pd_vals %}
+				<TH class ="table__cell"> {{header }}</TH>
+			{% endfor %}
+		</TR>
+
+		{% for row_data in data_pd_vals_all %}
+		<TR class="table__row">
+			{% for cell_data in row_data %}
+				<TD class ="table__cell"> {{cell_data }}</TD>
+			{% endfor %}
+		</TR>
+		{% endfor %}
+	</table>
+	
+<H2 class=title style="CLEAR: both"><A 
+name=ID0E6C>Averaged Power Density Plots</H2></DIV></DIV></DIV>
+	{% for image in all_images %}
+		<img class ="figure" src={{ image}}" >
+	{% endfor %}
+</body>
+</html>

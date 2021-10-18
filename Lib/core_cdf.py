@@ -18,6 +18,7 @@ from Lib.FarFieldsProcessing import Load_FF_Fields
 from Lib.FarFieldsProcessing import envelope_pattern_all_jobs
 from Lib.Reporter import Report_Module
 from Lib.MultiSetup import Read_Multi_Setup
+from Lib.Html_Report import Html_Writer
 from Lib.CreateReports_in_AEDT import AEDT_CreateReports
 import Lib.Utillities as utils
 
@@ -83,7 +84,6 @@ class CDF():
         self.get_desktop_settings()
         self.disable_desktop_settings()
         
-        run_multi_setup = True
         
         if self.multirun_state:
             all_jobs = Read_Multi_Setup(self.multi_setup_file_path,calc_type='CDF')
@@ -109,7 +109,10 @@ class CDF():
         job_ids = list(jobs.keys())
 
             
-        cdf_dict_all_jobs = {}
+        cdf_dict_all_jobs = {} #this will contain all CDF information
+        
+        #this will contain summary of CDF information, every 10 percentile CDF values only. For display and paths to images
+        cdf_dict_summary_all_jobs = {}
         for job in jobs.keys():
             print('Runnning JobID ' + str(job))
                     
@@ -164,6 +167,7 @@ class CDF():
             variation_dict = self.aedtapp.available_variations.nominal_w_values_dict
             output_dict = jobs[job]
             output_dict['Variation'] = variation_dict
+            output_dict['JobID']  = job
             utils.write_dictionary_to_json(path=job_sum_path_name,dict_to_write=output_dict)
 
             wl = 3e8/freq
@@ -226,6 +230,7 @@ class CDF():
             #recombine fields based on steering vector (codebook.input_vector)
             results = fields_data.combine_fields(codebook.input_vector)
             
+            
             cdf_dict_all_jobs[job] = results
             
             max_realized_gain = fields_data.get_max_for_each_beam(results,qty='RealizedGain')
@@ -234,7 +239,7 @@ class CDF():
 
             #plots for testimg
             # plot_one_beam= results[4]
-            reports = Report_Module(self.aedtapp,output_path)
+            reports = Report_Module(self.aedtapp,self.base_output_path,job_id = job)
             show_plot=True
             if self.multirun_state:
                 reports.close_all_reports()
@@ -252,6 +257,18 @@ class CDF():
 
 
             envelope_pattern = fields_data.envelope_pattern(results,qty='RealizedGain')
+            
+            percentils = np.linspace(.1,1,num=10)
+            cdf_value_interp  = np.interp(percentils,envelope_pattern['CDF_Area'],envelope_pattern['CDF_Value'])
+            temp_summary = {'Percentile':percentils,
+                            'CDF_Value':cdf_value_interp,
+                            'CDF_Renormalized':self.renormalize,
+                            'JobID':job}
+            if self.renormalize:
+                cdf_value_renorm_interp = np.interp(percentils,envelope_pattern['CDF_Area'],envelope_pattern['CDF_Value_Renorm'])
+                temp_summary['CDF_Value_Renorm']=cdf_value_renorm_interp
+                
+            
             
             envelope_pattern_for_writing = utils.dict_with_numpy_to_lists(envelope_pattern)
             utils.write_dictionary_to_json(path=output_path + 'CDF.json',
@@ -294,9 +311,14 @@ class CDF():
             if self.multirun_state:
                     reports.close_all_reports()
 
+            temp_summary['Paths_To_Images'] = reports.all_figure_paths
+            cdf_dict_summary_all_jobs[job] = temp_summary 
+            reports.all_figure_paths = [] #clear the figures since we just saved them to the summary 
+            
         if len(job_ids)>1:
             envelope_pattern_all = envelope_pattern_all_jobs(cdf_dict_all_jobs,
                                                              qty='RealizedGain')
+            
             
             envelope_pattern_for_writing_all = utils.dict_with_numpy_to_lists(envelope_pattern_all)
             utils.write_dictionary_to_json(path=self.base_output_path + 'CDF_AllJobs.json',
@@ -319,7 +341,29 @@ class CDF():
                                 save_name = 'CDF_MultiRun_' + all_jobs.name,
                                 save_plot = True,
                                 dB=True)
+            
+            
+            #save data for summary report
+            percentils = np.linspace(.1,1,num=10)
+            cdf_value_interp  = np.interp(percentils,envelope_pattern_all['CDF_Area'],envelope_pattern_all['CDF_Value'])
+            temp_summary = {'Percentile':percentils,
+                            'CDF_Value':cdf_value_interp,
+                            'CDF_Renormalized':self.renormalize,
+                            'JobID':'All'}
+            if self.renormalize:
+                cdf_value_renorm_interp = np.interp(percentils,envelope_pattern['CDF_Area'],envelope_pattern['CDF_Value_Renorm'])
+                temp_summary['CDF_Value_Renorm']=cdf_value_renorm_interp
+                
+            temp_summary['Paths_To_Images'] = reports.all_figure_paths
+            cdf_dict_summary_all_jobs['All'] = temp_summary 
+            
+
         self.restore_desktop_settings()
+        
+        for job_id_temp in cdf_dict_summary_all_jobs.keys():
+            html_out = Html_Writer(self.base_output_path,'Summary_Job_' +str(job_id_temp))
+            html_out.generate_html_cdf(cdf_dict_summary_all_jobs[job_id_temp],multirun_file=self.multi_setup_file_path)
+            
         print('Done')
         return True
 

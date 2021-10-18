@@ -86,13 +86,15 @@ TD.fail A:visited {
 	FONT-WEIGHT: bold; COLOR: red
 }
 .figure {
-	MAX-WIDTH: 50%; POSITION: relative; FLOAT: left; PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; MARGIN-LEFT: 20px; PADDING-RIGHT: 10px
+	MAX-WIDTH: 30%; POSITION: relative; FLOAT: left; PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; MARGIN-LEFT: 20px; PADDING-RIGHT: 10px
 }
 BR.figure-break {
 	DISPLAY: none
 }
 DIV.table {
 	CLEAR: both
+	border-spacing: 15px;
+	padding: 55px;
 }
 .literallayout {
 	WORD-WRAP: break-word; TEXT-ALIGN: justify
@@ -102,8 +104,13 @@ DIV.table {
 
 .table__row:nth-child(even) {
 	background-color: #e5e5e5;
+	text-align:center;
+}
+.table__row:nth-child(odd) {
+	text-align:center;
 }
 .table__header {
-	text-align:right;
+	text-align:center;
+	border-spacing: 50px;
 }
 

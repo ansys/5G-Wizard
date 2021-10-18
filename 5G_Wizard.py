@@ -5,6 +5,7 @@ Created on Thu Sep 16 13:24:58 2021
 @author: asligar
 """
 import sys
+import os
 import Lib.Utillities as utils
 from Lib.core_pd import PD
 from Lib.core_cdf import CDF
@@ -276,12 +277,14 @@ class MainWindow(QDialog):
             self.ui.multirun_group.setEnabled(True)
             self.ui.codebook_group.setEnabled(False)
             self.ui.pd_setup_group.setEnabled(False)
+            self.ui.cdf_setup_group.setEnabled(False)
             self.ui.solution_select_group.setEnabled(False)
         else:
             self.multi_run_enabled = False
             self.ui.multirun_group.setEnabled(False)
             self.ui.codebook_group.setEnabled(True)
             self.ui.pd_setup_group.setEnabled(True)
+            self.ui.cdf_setup_group.setEnabled(True)
             self.ui.solution_select_group.setEnabled(True)
         
     def browse_multi_run(self):
@@ -328,7 +331,11 @@ class MainWindow(QDialog):
         if not self.validate_gui():
             print("selections are not valid")
             return
-        wizard = PD(self.aedtapp,output_path=str(self.ui.output_text_path.text()))
+
+        output_path = str(self.ui.output_text_path.text())
+        output_path = os.path.join(output_path, '')
+
+        wizard = PD(self.aedtapp,output_path=output_path)
         wizard.version = version
         if self.multi_run_enabled:
             wizard.multirun_state = True
@@ -343,8 +350,7 @@ class MainWindow(QDialog):
             selected_freq = float(self.ui.freq_input.currentText())
             
             codebook_path = str(self.ui.codebook_text.text())
-            output_path = str(self.ui.output_text_path.text())
-            
+
             selected_eval_surf = str(self.ui.eval_surf_input.currentText())
             selected_area = str(self.ui.pd_area_input.currentText())
             selected_pd_type = str(self.ui.pd_type_input.currentText())
@@ -361,6 +367,7 @@ class MainWindow(QDialog):
             wizard.project_name = selected_project
             wizard.design_name = selected_design
             wizard.surface_name= selected_eval_surf
+
             wizard.averaging_area = utils.convert_units(selected_area,newUnits= 'meter^2') #area should be in meters^2
             wizard.setup_name = selected_setup
             wizard.path_to_codebook = codebook_path
@@ -374,11 +381,13 @@ class MainWindow(QDialog):
     def run_cdf_button(self):
         print("running")
 
-
         if not self.validate_gui():
             print("selections are not valid")
             return
-        wizard = CDF(self.aedtapp,output_path=str(self.ui.output_text_path.text()))
+
+        output_path = str(self.ui.output_text_path.text())
+        output_path = os.path.join(output_path, '')
+        wizard = CDF(self.aedtapp,output_path=output_path)
         wizard.version = version
         if self.multi_run_enabled:
             wizard.multirun_state = True
@@ -393,7 +402,7 @@ class MainWindow(QDialog):
             selected_freq = float(self.ui.freq_input.currentText())
             selected_cs = str(self.ui.cs_input.currentText())
             codebook_path = str(self.ui.codebook_text.text())
-            output_path = str(self.ui.output_text_path.text())
+
             selected_cdf_renorm = self.ui.cdf_renorm_input.currentText()
             selected_db_of_lin = str(self.ui.cdf_dblin_input.currentText())
 

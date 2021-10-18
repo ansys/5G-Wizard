@@ -34,6 +34,7 @@ class Html_Writer():
     #     return job_folders
 
     def get_design_info(self,job_id):
+
         job_folder_name = 'JobID_' + str(job_id)
         json_for_job = self.base_path + job_folder_name + '/job_summary.json'
         
@@ -49,7 +50,7 @@ class Html_Writer():
     #     json_for_all_jobs = glob.glob(self.base_path  + '*.json',recursive=False)
     #     return json_for_all_jobs
     
-    def generate_html(self,data):
+    def generate_html_pd(self,data):
         
         
         title = 'Power Density Summary Report: '
@@ -103,15 +104,15 @@ class Html_Writer():
         
         for idx, each in enumerate(data['Paths_To_Images']):
             if type(data['Paths_To_Images'])==dict:
-                all_images.append('\"' + self.script_path + data['Paths_To_Images'][each]+'\"')
+                all_images.append('\"' + data['Paths_To_Images'][each]+'\"')
             else:
-                all_images.append('\"' + self.script_path + data['Paths_To_Images'][idx]+'\"')
+                all_images.append('\"'  + data['Paths_To_Images'][idx]+'\"')
 
         outputfile = self.base_path +self.name +'.html'
 
         subs = jinja2.Environment( 
                       loader=jinja2.FileSystemLoader('./')      
-                      ).get_template('template.html').render(title=title,
+                      ).get_template('./template/template_pd.html').render(title=title,
                                                              headings_pd_summary=headings_pd_summary,
                                                              data_pd_summary=data_pd_summary,
                                                              headings_pd_vals=headings_pd_vals,
@@ -121,7 +122,86 @@ class Html_Writer():
         with open(outputfile,'w') as f: f.write(subs)
         #all_job_folders = self.get_jobs()
         
+    def generate_html_cdf(self,data,multirun_file = ''):
         
+        
+        title = 'CDF Summary Report: '
+        
+        if data['JobID']!='All':
+            design_info_dict = self.get_design_info(data['JobID'])
+            multirun_file=False
+            title = 'CDF Summary Report: ' + design_info_dict['Design_Name']
+            
+        else:
+            design_info_dict = {'Multi-Run':multirun_file}
+            multirun_file=True
+            title = 'CDF Density Summary Report: Multi-Run '
+        
+        percentiles =list(data['Percentile'])
+        if 'Module_Name' in data.keys():
+            headings_cdf_summary = ('Project_Name','Design_Name','Solution_Name','Codebook_Name','Freq','CS_Name','Module_Name')
+        elif not multirun_file:
+            headings_cdf_summary = ('Project_Name','Design_Name','Solution_Name','Codebook_Name','Freq','CS_Name')
+        else:
+            headings_cdf_summary = ('Multi-Run',)
+            
+        data_cdf_summary = []
+        for heading in headings_cdf_summary:
+            if heading in data.keys():
+                if type(data[heading])==list:
+                    data_cdf_summary.append(data[heading][0])
+                else:
+                    data_cdf_summary.append(data[heading])
+            elif heading in design_info_dict.keys():
+                if type(design_info_dict[heading])==list:
+                    data_cdf_summary.append(design_info_dict[heading][0])
+                else:
+                    data_cdf_summary.append(design_info_dict[heading])
+                
+        data_cdf_summary = tuple(data_cdf_summary)
+        
+        
+        if data['CDF_Renormalized']==True:
+            headings_cdf_vals = ('Percentile','CDF_Value','CDF_Value_Renorm')
+        else:
+            headings_cdf_vals = ('Percentile','CDF_Value')
+            
+        data_cdf_vals_all = []
+        for idx, perc in enumerate(percentiles):
+            data_cdf_vals_row = []
+            for heading in headings_cdf_vals:
+                if type(data[heading])==dict:
+                    val = np.round(data[heading][perc],2)
+                    data_cdf_vals_row.append(val)
+                else:
+                    val = np.round(data[heading][idx],2)
+                    data_cdf_vals_row.append(val)
+            data_cdf_vals_row = tuple(data_cdf_vals_row)
+            data_cdf_vals_all.append(data_cdf_vals_row)
+        data_cdf_vals_all = tuple(data_cdf_vals_all)
+        
+        all_images = []
+        
+        for idx, each in enumerate(data['Paths_To_Images']):
+            if type(data['Paths_To_Images'])==dict:
+                all_images.append('\"'  + data['Paths_To_Images'][each]+'\"')
+            else:
+                all_images.append('\"' + data['Paths_To_Images'][idx]+'\"')
+
+        outputfile = self.base_path +self.name +'.html'
+
+        subs = jinja2.Environment( 
+                      loader=jinja2.FileSystemLoader('./')      
+                      ).get_template('./template/template_cdf.html').render(title=title,
+                                                             headings_pd_summary=headings_cdf_summary,
+                                                             data_pd_summary=data_cdf_summary,
+                                                             headings_pd_vals=headings_cdf_vals,
+                                                             data_pd_vals_all=data_cdf_vals_all,
+                                                             all_images=all_images)
+        # lets write the substitution to a file
+        with open(outputfile,'w') as f: f.write(subs)
+        print('Results Written: ' + outputfile)
+        #all_job_folders = self.get_jobs()
 # with document(title='Photos') as doc:
 #     h1('Photos')
 #     for path in photos:

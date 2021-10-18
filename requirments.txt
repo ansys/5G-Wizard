@@ -1,0 +1,7 @@
+pip install pywin32
+pip install numpy
+pip install h5py
+pip install -U matplotlib
+pip install pyaedt==0.3.25
+pip install scipy
+pip install Jinja2

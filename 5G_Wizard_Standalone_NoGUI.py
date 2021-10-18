@@ -18,7 +18,7 @@ version =  "2021.2"
 
 def run_pd(aedtapp):
     multi_run_enabled = False
-    wizard = PD(aedtapp,output_path = './output/')
+    wizard = PD(aedtapp)
     wizard.version = version
     if multi_run_enabled:
         wizard.multirun_state = True
@@ -33,7 +33,7 @@ def run_pd(aedtapp):
         codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
         #codebook_path = './example_projects/Codebook_for_ANSYS_Example1_Pin_6W_HVpol.csv'
 
-        selected_eval_surf = '20mm_Surface'
+        selected_eval_surf = '5mm_Surface'
         #selected_eval_surf = '25mm_Surface'
         selected_area = '1cm^2' #area in cm^2 as a string
         selected_pd_type = 'PD_n_plus'
@@ -54,7 +54,7 @@ def run_pd(aedtapp):
     return wizard
 def run_cdf(aedtapp):
     multi_run_enabled = False
-    wizard = CDF(aedtapp,output_path = './output/')
+    wizard = CDF(aedtapp)
     wizard.version = version
     if multi_run_enabled:
         wizard.multirun_state = True
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         aedtapp = Hfss(specified_version=version)
 
     wizard_pd = run_pd(aedtapp)
-    #wizard_cdf = run_cdf(aedtapp)
+    wizard_cdf = run_cdf(aedtapp)
     #run_validate()
     
     

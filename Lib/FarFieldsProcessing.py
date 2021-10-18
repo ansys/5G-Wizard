@@ -270,6 +270,8 @@ class Load_FF_Fields():
             else:
                 cdf_vals_renorm = cdf_vals/max_cdf_vals*self.renorm_value
             ff_max_all_angles['CDF_Value_Renorm'] = cdf_vals_renorm
+        else:
+            ff_max_all_angles['CDF_Value_Renorm'] = cdf_vals
 
         
         ff_max_all_angles['CDF_Area'] = cdf_area

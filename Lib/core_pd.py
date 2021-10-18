@@ -84,10 +84,9 @@ class PD():
         self.get_desktop_settings()
         self.disable_desktop_settings()
         
-        run_multi_setup = False
         
         if self.multirun_state:
-            all_jobs = Read_Multi_Setup(self.multi_setup_file_path,calc_type='PD')
+            all_jobs = Read_Multi_Setup(self.multi_setup_file_path,calc_type='PD',version =  self.version)
             #validation of setup is not complete
             if not all_jobs.validate_multi_setup(self.aedtapp):
                 raise SystemExit("Multi-run setup file is not valid")
@@ -120,8 +119,13 @@ class PD():
                 os.makedirs(output_path)
                 
             job_summary_name = 'job_summary.json'
-            job_sum_path_name = output_path + job_summary_name            
-            utils.write_dictionary_to_json(path=job_sum_path_name,dict_to_write=jobs[job])
+            job_sum_path_name = output_path + job_summary_name   
+            
+            variation_dict = self.aedtapp.available_variations.nominal_w_values_dict
+            output_dict = jobs[job]
+            output_dict['Variation'] = variation_dict
+            
+            utils.write_dictionary_to_json(path=job_sum_path_name,dict_to_write=output_dict)
             
             ant_param_dict  = {}
             
@@ -402,7 +406,8 @@ class PD():
             
             report_name_base_str = surface_name + '_' + str(freq*1e-9) + 'GHz'
             
-            reports = Report_Module(self.aedtapp,output_path)
+            #job_id is passed in becuase it is used to determine relativ path
+            reports = Report_Module(self.aedtapp,self.base_output_path,job_id = job)
             show_plots=True
             if self.multirun_state:
                 show_plots = False
@@ -423,7 +428,7 @@ class PD():
             #plot the averaged PD for every beamID
             for beam in pd_avg.keys():
                 pd = pd_avg[beam]
-                plot_title = 'Averaged Power Density: Beam ID ' + str(beam)
+                plot_title = 'sPD-avg, ' +pd_type + ': Beam ID ' + str(beam) + ', Avg. Area:' + str(averaging_area*1e4) + 'cm^2'
                 save_name = 'avg_' + pd_type + '_beamid_' + str(beam) + '_' + report_name_base_str
                 reports.plot_pd(pd,fields_data.pos,title=plot_title, save_plot=True,save_name=save_name)
             
@@ -480,7 +485,7 @@ class PD():
         
         for job_id_temp in self.pd_max_dict_all_jobs.keys():
             html_out = Html_Writer(self.base_output_path,'Summary_Job_' +str(job_id_temp))
-            html_out.generate_html(pd_max_dict_all_jobs[job_id_temp])
+            html_out.generate_html_pd(pd_max_dict_all_jobs[job_id_temp])
         
         return True
         
