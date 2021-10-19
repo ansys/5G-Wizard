@@ -12,6 +12,7 @@ from pyaedt import Hfss
 import sys
 class Read_Multi_Setup():
     def __init__(self,file_name,calc_type='',version =  "2021.2"):
+        self.is_valid = True
         self.version =  version
         jobs = {}
         
@@ -87,7 +88,7 @@ class Read_Multi_Setup():
             self.jobs = jobs
         except:
             print("input file format does not contain all needed data, see example")
-            sys.exit()
+            self.is_valid = False
     def validate_multi_setup(self,aedtapp):
         #not yet complete
         #will check all possible setups to make sure everything will run
@@ -98,15 +99,18 @@ class Read_Multi_Setup():
             if not os.path.exists(cb_name):
                 print('Codebook ' + cb_name + " does not exist")
                 print('Codebook location should be relative or in same location as multi_run file')
+                self.is_valid = False
                 return False
             
             if self.jobs[job]['Project_Name'] not in aedtapp.project_list:
                 print('ERROR: Project ' + selected_project + 'Does Not Exist')
+                self.is_valid = False
                 return False
             else:
                 aedtapp = Hfss(self.jobs[job]['Project_Name'],specified_version=self.version)
             if self.jobs[job]['Design_Name'] not in aedtapp.design_list:
                 print('ERROR: Design ' + selected_design + 'Does Not Exist')
+                self.is_valid = False
                 return False
             
             
@@ -115,11 +119,13 @@ class Read_Multi_Setup():
             sweep_name = solution[1].strip()
             if setup_name not in aedtapp.get_setups():
                 print('Solution Setup ' + setup_name + " does not exist")
+                self.is_valid = False
                 return False
             all_sweeps = aedtapp.get_sweeps(setup_name)
             all_sweeps.append("LastAdaptive")
             if sweep_name not in all_sweeps:
                 print('Sweep ' + sweep_name + " does not exist")
+                self.is_valid = False
                 return False 
 
             #check if eval surfaces exists
@@ -130,6 +136,7 @@ class Read_Multi_Setup():
                     object_name = oEditor.GetMatchedObjectName(eval_surf)
                     if len(object_name)!=1:
                         print('Evaluation Surface ' + eval_surf + " does not exist")
+                        self.is_valid = False
                         return False 
                 
             
@@ -138,6 +145,7 @@ class Read_Multi_Setup():
                         if self.jobs[job]['PD_Type'].lower() !='pd_tot_plus':
                             print("PD type is " + self.jobs[job]['PD_Type'].lower())
                             print('PD_Type must be pd_n_plus, pd_tot_plus or pd_mod_plus')
+                            self.is_valid = False
                             return False 
                     
                     

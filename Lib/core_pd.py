@@ -88,8 +88,13 @@ class PD():
         if self.multirun_state:
             all_jobs = Read_Multi_Setup(self.multi_setup_file_path,calc_type='PD',version =  self.version)
             #validation of setup is not complete
+            if not all_jobs.is_valid:
+                print("Multi-run setup file is not valid")
+                return False
             if not all_jobs.validate_multi_setup(self.aedtapp):
-                raise SystemExit("Multi-run setup file is not valid")
+                print("Multi-run setup file is not valid")
+                return False
+
             jobs = all_jobs.jobs
         else:
             #select parameters
@@ -300,8 +305,7 @@ class PD():
                     overriding_renorm_values.append(codebook.input_vector[each]['Prad_Renorm'])
                     override_renorm_from_codebook = True
                     self.renormalize = True
-                else:
-                    self.renormalize = False
+
             if override_renorm_from_codebook:
                 print('Renormlization values detected in codebook, using those values')
                 self.renorm_values = overriding_renorm_values

@@ -21,23 +21,23 @@ def run_pd(aedtapp):
     wizard = PD(aedtapp)
     wizard.version = version
     if multi_run_enabled:
-        wizard.multirun_state = True
+        wizard.multirun_state = multi_run_enabled
         wizard.multi_setup_file_path = './example_projects/Multi_Setup_Run_PD.csv'
 
     else:
-        wizard.multirun_state = False
+        wizard.multirun_state = multi_run_enabled
         selected_project = '5G_28GHz_AntennaModule'
         selected_design = '4x1_array2'
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
-        codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
-        #codebook_path = './example_projects/Codebook_for_ANSYS_Example1_Pin_6W_HVpol.csv'
+        #codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
+        codebook_path = './example_projects/CodebookExample_Hpol.csv'
 
         selected_eval_surf = '5mm_Surface'
         #selected_eval_surf = '25mm_Surface'
         selected_area = '1cm^2' #area in cm^2 as a string
         selected_pd_type = 'PD_n_plus'
-        renormalize = False
+        renormalize = True
         renorm_values= [1,.5,1,.5,.1]
     
         wizard.freq = selected_freq
@@ -57,17 +57,17 @@ def run_cdf(aedtapp):
     wizard = CDF(aedtapp)
     wizard.version = version
     if multi_run_enabled:
-        wizard.multirun_state = True
+        wizard.multirun_state = multi_run_enabled
         wizard.multi_setup_file_path = './example_projects/Multi_Setup_Run_CDF.csv'
 
     else:
-        wizard.multirun_state = False
+        wizard.multirun_state = multi_run_enabled
         selected_project = '5G_28GHz_AntennaModule'
         selected_design = '4x1_array2'
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
         renormalize = True
-        renormalize_dB = False
+        renormalize_dB = True
         renorm_value= 10
         
         codebook_path = './example_projects/CodebookExample_Hpol.csv'
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
         aedtapp = Hfss(specified_version=version)
 
-    wizard_pd = run_pd(aedtapp)
+    #wizard_pd = run_pd(aedtapp)
     wizard_cdf = run_cdf(aedtapp)
     #run_validate()
     

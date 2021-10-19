@@ -88,8 +88,12 @@ class CDF():
         if self.multirun_state:
             all_jobs = Read_Multi_Setup(self.multi_setup_file_path,calc_type='CDF')
             #validation of setup is not complete
+            if not all_jobs.is_valid:
+                print("Multi-run setup file is not valid")
+                return False
             if not all_jobs.validate_multi_setup(self.aedtapp):
-                raise SystemExit("Multi-run setup file is not valid")
+                print("Multi-run setup file is not valid")
+                return False
             jobs = all_jobs.jobs
         else:
             #select parameters

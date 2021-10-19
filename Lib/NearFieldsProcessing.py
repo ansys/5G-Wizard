@@ -134,6 +134,18 @@ class Load_NF_Fields():
             beams_to_eval = list(vector.keys())
             
         if self.renormalize:
+            if isinstance(self.renorm_values, str):
+                if 'w' in self.renorm_values.lower():
+                    self.renorm_values=self.renorm_values.replace("W","")
+                    self.renorm_values=self.renorm_values.replace("w","")
+                if '[' in self.renorm_values.lower():
+                    self.renorm_values=self.renorm_values.replace("[","")
+                    self.renorm_values=self.renorm_values.replace("]","")
+                if "," in self.renorm_values:
+                    self.renorm_values = self.renorm_values.split(",")
+                    self.renorm_values = [float(i) for i in self.renorm_values]
+
+
             #if list of value check to see lenght of it, needs to be at least as long as num unique beams
             if isinstance(self.renorm_values, list): 
                 if len(self.renorm_values)==0: 
@@ -150,7 +162,7 @@ class Load_NF_Fields():
                     print(' as long as the number of unique beams, or a single value. NOT renormalizing')
                     self.renormalize=False
             else: #if a single value is given, turn it into a list of the same values
-                val = self.renorm_values
+                val = float(self.renorm_values)
                 self.renorm_values = list(np.ones(len(beams_to_eval))*val)
             
         for n, beam in enumerate(beams_to_eval):#each key in the vector is the beam_id
