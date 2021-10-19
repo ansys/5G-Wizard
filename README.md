@@ -29,7 +29,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/ariensligar/5G-Wizard">
-    <img src="images/logo.png" alt="Logo" width="100" height="100">
+    <img src="images/logo.png" alt="Logo" width="200" height="200">
   </a>
 
 <h3 align="center">Ansys 5G Wizard</h3>
@@ -88,20 +88,20 @@ The Ansys 5G Wizard can be used to calculate Power Density or Cumulative Distrib
 Power Density (PD): 
 The PD is calculated based on IEC_IEEE_63195-2_2021_05_06_V301. The calculations described in this document are implemented in the 5G Wizard. Specifically, equations (4), 5(), and (8) are implemented as PD_N+, PD_Tot+ and PD_Mod+ as described in section 8.5. The average PD for each PD type is performed by rotating a square around each evaluation point on the grid, performing the average for each rotation, then selecting the maximum across all these rotations as the averaged value. This process is described in more detail in Annex D of the 63195-2 document.  
 
-[![Power Density Example][pd_example]]
+[![Power Density Example][pd_example]](https://github.com/ariensligar/5G-Wizard)
 
 
 Cumulative Distribution Function (CDF):
 CDF if calculated as the maximum gain across all beam ID’s defined in the codebook. 
-[![CDF Example][cdf_example]]
-[![CDF Envelope Example][cdf_envelope_example]]
+[![CDF Example][cdf_example]](https://github.com/ariensligar/5G-Wizard)
+[![CDF Envelope Example][cdf_envelope_example]](https://github.com/ariensligar/5G-Wizard)
 
 
 Validation:
 The calculation from the local Poynting vector to each PD type is validated using the IEEE provided reference data. These can also be validated within the 5G wizard by selecting “Run Validation.”
 
 The result of the averaging algorithm implemented in the 5G wizard can be compared with the provided reference data by running “Run Validation” from within the wizard. The resulting validation shows less than 1% difference between validation data and the output from the 5G wizard.
-[![Example of Validation Data][validation_screenshot]]
+[![Example of Validation Data][validation_screenshot]](https://github.com/ariensligar/5G-Wizard)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -217,7 +217,7 @@ Multi-Run Example - CDF:
 
 
 Results will be written to an HTML file located in your specified output directory. The results displayed in the html file are also available directly within the results folder. This includes data stored as json and hdf5 formats for easy access by users for output customization
-[![Report Screenshot][report_screenshot]]
+[![Report Screenshot][report_screenshot]](https://github.com/ariensligar/5G-Wizard)
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
