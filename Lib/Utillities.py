@@ -12,6 +12,7 @@ import numpy as np
 import os
 import datetime
 import json
+import csv
 
 def round_time(dt=None, roundTo=1):
    """Round a datetime object to any time lapse in seconds
@@ -23,6 +24,57 @@ def round_time(dt=None, roundTo=1):
    rounding = (seconds+roundTo/2) // roundTo * roundTo
    return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)
              
+def write_csv(data,path='./out.csv',sort_by_pd=False):
+    #headings = list(data.keys()) 
+    #these heading should always exist
+    headings = ['BeamId','Module_Name','PD_Type','EvalSurface','Freq','Averaging_Area','PD_Max','RadiatedPower','Renormalized PD']
+    beam_ids = list(data['PD_Max'].keys())
+    data['BeamId'] = beam_ids
+    #headings.append('BeamId')
+    #remove some headings we don't want to output in csv file
+    #headings = list(filter(('Paths_To_Raw_Data').__ne__, headings))
+    #headings = list(filter(('Paths_To_Avg_Data').__ne__, headings))
+
+    all_rows = []
+    if sort_by_pd:
+        pd_max_as_list = list(data['PD_Max'].values())
+        original_index_vals = list(range(len(beam_ids)))
+        zipped = zip(pd_max_as_list,data['BeamId'],original_index_vals)
+        sort_zip = list(sorted(zipped,reverse=True))
+        for s in sort_zip:
+            row_data = []
+            for head in headings:
+                cell_data= data[head]
+                #cell data may be dict, list or single value
+                if isinstance(cell_data, list):
+                    cell_data=str(cell_data[s[2]])
+                elif isinstance(cell_data, dict):
+                    cell_data = str(cell_data[s[1]])
+                else:
+                    cell_data= str(cell_data)
+                row_data.append(cell_data)
+            all_rows.append(row_data)
+    else:
+        for n, beam in enumerate(beam_ids):
+            row_data = []
+            for head in headings:
+                cell_data = data[head]
+                #cell data may be dict, list or single value
+                if isinstance(cell_data, list):
+                    cell_data=str(cell_data[n])
+                elif isinstance(cell_data, dict):
+                    cell_data = str(cell_data[beam])
+                else:
+                    cell_data= str(cell_data)
+                row_data.append(cell_data)
+            all_rows.append(row_data)
+
+
+    with open(path, 'w',newline='') as csvfile: 
+
+        csvwriter = csv.writer(csvfile)  
+        csvwriter.writerow(headings) 
+        csvwriter.writerows(all_rows)
 
 def dict_with_numpy_to_lists(input_dict):
     '''

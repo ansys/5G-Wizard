@@ -97,8 +97,8 @@ if __name__ == '__main__':
     with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
         aedtapp = Hfss(specified_version=version)
 
-    #wizard_pd = run_pd(aedtapp)
-    wizard_cdf = run_cdf(aedtapp)
+    wizard_pd = run_pd(aedtapp)
+    #wizard_cdf = run_cdf(aedtapp)
     #run_validate()
     
     
