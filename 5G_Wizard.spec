@@ -8,7 +8,7 @@ block_cipher = None
 
 a = Analysis(['5G_Wizard.py'],
              binaries=[],
-             datas=[("images", "images"),("validation", "validation"),("template", "template")],
+             datas=[],
              hiddenimports=[],
              hookspath=[],
              hooksconfig={},
