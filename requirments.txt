@@ -5,3 +5,5 @@ pip install -U matplotlib
 pip install pyaedt==0.3.25
 pip install scipy
 pip install Jinja2
+pip install PySide6 #only needed to run GUI
+pip install pyinstaller #only needed to build application

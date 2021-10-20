@@ -1,14 +1,15 @@
 .qt_for_python/
 dist/
 example_projects/*.aedtresults/
+example_projects/*.aedb/
 *.aedtresults/
 example_projects/*.lock
 __pycache__/
 /**/__pycache__/
 **/__pycache__/
+validation/*.png
 output/
 build/
 dist/output/
 *.old
-*.spec
 test_html.py
