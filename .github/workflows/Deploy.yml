@@ -48,11 +48,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install PyInstaller==${{ env.pyinstaller-version }} -r requirements.txt
       - name: Run PyInstaller
-        env:
-          PYTHONOPTIMIZE: 1 # Enable optimizations as if the -O flag is given.
-          PYTHONHASHSEED: 42 # Try to ensure deterministic results.
         run: |
-          pyinstaller 5G_Wizard.spec
+          pyinstaller -F 5G_Wizard.spec
       # This step exists for debugging.  Such as checking if data files were included correctly by PyInstaller.
       - name: List distribution files
         run: |

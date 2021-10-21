@@ -28,7 +28,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/ariensligar/5G-Wizard">
+  <a href="https://github.com/pyansys/5G-Wizard">
     <img src="images/logo.png" alt="Logo" width="200" height="200">
   </a>
 
@@ -37,14 +37,14 @@
   <p align="center">
     project_description
     <br />
-    <a href="https://github.com/ariensligar/5G-Wizard"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/pyansys/5G-Wizard"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/ariensligar/5G-Wizard">View Demo</a>
+    <a href="https://github.com/pyansys/5G-Wizard">View Demo</a>
     ·
-    <a href="https://github.com/ariensligar/5G-Wizard/issues">Report Bug</a>
+    <a href="https://github.com/pyansys/5G-Wizard/issues">Report Bug</a>
     ·
-    <a href="https://github.com/ariensligar/5G-Wizard/issues">Request Feature</a>
+    <a href="https://github.com/pyansys/5G-Wizard/issues">Request Feature</a>
   </p>
 </div>
 
@@ -81,22 +81,22 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://github.com/ariensligar/5G-Wizard)
+[![Product Name Screen Shot][product-screenshot]](https://github.com/pyansys/5G-Wizard)
 
 The Ansys 5G Wizard can be used to calculate Power Density or Cumulative Distribution Function. These calculations use a codebook to define the mag/phase value on ports for each beam ID. The codebook definition will be imported into your HFSS design, where you can now control the mag/phase on all ports  by simply changing the post processing variable “BeamID.”
 
 Power Density (PD): 
 The PD is calculated based on IEC_IEEE_63195-2_2021_05_06_V301. The calculations described in this document are implemented in the 5G Wizard. Specifically, equations (4), 5(), and (8) are implemented as PD_N+, PD_Tot+ and PD_Mod+ as described in section 8.5. The average PD for each PD type is performed by rotating a square around each evaluation point on the grid, performing the average for each rotation, then selecting the maximum across all these rotations as the averaged value. This process is described in more detail in Annex D of the 63195-2 document.  
 
-[![Power Density Example][pd_example]](https://github.com/ariensligar/5G-Wizard)
+[![Power Density Example][pd_example]](https://github.com/pyansys/5G-Wizard)
 
 
 Cumulative Distribution Function (CDF):
 CDF if calculated as the maximum gain across all beam ID’s defined in the codebook. 
 
-[![CDF Example][cdf_example]](https://github.com/ariensligar/5G-Wizard)
+[![CDF Example][cdf_example]](https://github.com/pyansys/5G-Wizard)
 
-[![CDF Envelope Example][cdf_envelope_example]](https://github.com/ariensligar/5G-Wizard)
+[![CDF Envelope Example][cdf_envelope_example]](https://github.com/pyansys/5G-Wizard)
 
 
 
@@ -105,7 +105,7 @@ The calculation from the local Poynting vector to each PD type is validated usin
 
 The result of the averaging algorithm implemented in the 5G wizard can be compared with the provided reference data by running “Run Validation” from within the wizard. The resulting validation shows less than 1% difference between validation data and the output from the 5G wizard.
 
-[![Example of Validation Data][validation_screenshot]](https://github.com/ariensligar/5G-Wizard)
+[![Example of Validation Data][validation_screenshot]](https://github.com/pyansys/5G-Wizard)
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -138,7 +138,7 @@ The 5G wizard can be run by executing the standalone 5G_Wizard.exe or by using o
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/ariensligar/5G-Wizard.git
+   git clone https://github.com/pyansys/5G-Wizard.git
    ```
 
 If you want to run the 5G wizard as a script (not using the executable), a python environment will need to be configured. See README_python_env.txt for an example of how to setup a python envionrment. If you want to built the applicaiton as an exe, see README_creating_application.txt.
@@ -223,7 +223,7 @@ Multi-Run Example - CDF:
 
 Results will be written to an HTML file located in your specified output directory. The results displayed in the html file are also available directly within the results folder. This includes data stored as json and hdf5 formats for easy access by users for output customization.
 
-[![Report Screenshot][report_screenshot]](https://github.com/ariensligar/5G-Wizard)
+[![Report Screenshot][report_screenshot]](https://github.com/pyansys/5G-Wizard)
 
 
 
@@ -239,7 +239,7 @@ Results will be written to an HTML file located in your specified output directo
 - [] Feature 3
     - [] Nested Feature
 
-See the [open issues](https://github.com/ariensligar/5G-Wizard/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/pyansys/5G-Wizard/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -277,7 +277,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Arien Sligar - arien.sligar@ansys.com
 
-Project Link: [https://github.com/ariensligar/5G-Wizard](https://github.com/ariensligar/5G-Wizard)
+Project Link: [https://github.com/pyansys/5G-Wizard](https://github.com/pyansys/5G-Wizard)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -297,15 +297,15 @@ Project Link: [https://github.com/ariensligar/5G-Wizard](https://github.com/arie
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/ariensligar/5G-Wizard.svg?style=for-the-badge
-[contributors-url]: https://github.com/ariensligar/5G-Wizard/graphs/contributors
+[contributors-url]: https://github.com/pyansys/5G-Wizard/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/ariensligar/5G-Wizard.svg?style=for-the-badge
-[forks-url]: https://github.com/ariensligar/5G-Wizard/network/members
+[forks-url]: https://github.com/pyansys/5G-Wizard/network/members
 [stars-shield]: https://img.shields.io/github/stars/ariensligar/5G-Wizard.svg?style=for-the-badge
-[stars-url]: https://github.com/ariensligar/5G-Wizard/stargazers
+[stars-url]: https://github.com/pyansys/5G-Wizard/stargazers
 [issues-shield]: https://img.shields.io/github/issues/ariensligar/5G-Wizard.svg?style=for-the-badge
-[issues-url]: https://github.com/ariensligar/5G-Wizard/issues
+[issues-url]: https://github.com/pyansys/5G-Wizard/issues
 [license-shield]: https://img.shields.io/github/license/ariensligar/5G-Wizard.svg?style=for-the-badge
-[license-url]: https://github.com/ariensligar/5G-Wizard/blob/master/LICENSE.txt
+[license-url]: https://github.com/pyansys/5G-Wizard/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
