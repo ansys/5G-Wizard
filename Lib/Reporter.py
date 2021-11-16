@@ -583,9 +583,10 @@ class Report_Module():
 
         pd_surface = fields_mesh.delaunay_2d()
 
-        if show_plot:
+
+        if show_plot: 
             p = pv.Plotter()
-        else:
+        else: #plotter seems to behavei differently with True or False here, so just making two different plotters
             p = pv.Plotter(off_screen=True)
         
 
@@ -594,8 +595,9 @@ class Report_Module():
         first_beam = np.min(beam_ids)
         last_beam = np.max(beam_ids)
         beam_text = p.add_text("Beam ID: 0", position='lower_left', font_size=18, color=None)
+        #depending on slider bar position, update fields plot
         def beam_select(value=1):
-            beam_select = str(int(value))
+            beam_select = str(int(value)) #slider doesn't allow discrete values
             p.remove_actor('PD')
             mag = np.ndarray.flatten(fields_data.p_avg_all_beams[int(value)],order='C')
             fields_mesh[str(beam_ids[0])] = mag
@@ -606,28 +608,28 @@ class Report_Module():
             p.update()
             return
         
+        def screenshot():
+            beam_slider.EnabledOff()
+            cad_toggle.EnabledOff()
+            help_text.VisibilityOff()
+            #p.view_xy()
+            p.update()
+
+            #print("Window size ", p.window_size)
+            file_name = self.get_new_file_name()
+            p.screenshot(file_name, transparent_background=False)
+            beam_slider.EnabledOn()
+
+            cad_toggle.EnabledOn()
+            help_text.VisibilityOn()
+            p.update()
+            print('Screenshot Saved: ' + file_name)
+            self.all_figure_paths.append(file_name)
+                
         if show_cad:
             def toggle_vis_cad(flag):
                 cad.SetVisibility(flag)
 
-            def screenshot():
-                beam_slider.EnabledOff()
-                cad_toggle.EnabledOff()
-                help_text.VisibilityOff()
-                #p.view_xy()
-                p.update()
-
-                #print("Window size ", p.window_size)
-                file_name = self.get_new_file_name()
-                p.screenshot(file_name, transparent_background=False)
-                beam_slider.EnabledOn()
-
-                cad_toggle.EnabledOn()
-                help_text.VisibilityOn()
-                p.update()
-                print('Screenshot Saved: ' + file_name)
-                self.all_figure_paths.append(file_name)
-            
             #import geometry
             oEditor = self.aedtapp.odesign.SetActiveEditor("3D Modeler")
             cad_file = self.absolute_path +'/geometry.obj'
@@ -642,10 +644,14 @@ class Report_Module():
             for each in model_objects:
                 if 'radi' not in each.lower():
                     objects_to_display.append(each)
-            print("INFO: Exporting Geometry for Display")
-            oEditor.ExportModelMeshToFile(cad_file, objects_to_display)
-            print("...Done")
             if os.path.exists(cad_file):
+                #reuse geometry if it already exists
+                print("INFO: Using geometry file "+cad_file)
+            else:#export geometry if it doesn't exist
+                print("INFO: Exporting Geometry for Display")
+                oEditor.ExportModelMeshToFile(cad_file, objects_to_display)
+                print("...Done")
+            if os.path.exists(cad_file): #if succesfully exported, display CAD
                 cad_mesh = pv.read(cad_file)
                 color_display_type = ''
                 if 'MaterialIds' in cad_mesh.array_names:
@@ -657,32 +663,30 @@ class Report_Module():
             else:
                 print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
                 
+    
             #add widgets
             beam_slider = p.add_slider_widget(beam_select, [first_beam, last_beam], title='Beam Select',value=0)
         help_text = p.add_text("Press \'S\' to Generate Screenshot", position='upper_left', font_size=18, color=None)
         
         p.add_key_event("s", screenshot)
         
+        #export predefined orientations
         if not show_plot:
-            file_name =  self.get_new_file_name()
-            self.all_figure_paths.append(file_name)
+            #export images
             beam_slider.EnabledOff()
-            help_text.VisibilityOff()
+            help_text.VisibilityOff()  
+            file_name =  self.get_new_file_name()
             p.screenshot(file_name)
-            file_name = self.get_new_file_name()
-            self.all_figure_paths.append(file_name)
-            p.view_xy()
-            p.screenshot(file_name)
-            p.view_yz()
-            file_name = self.get_new_file_name()
-            self.all_figure_paths.append(file_name)
-            p.screenshot(file_name)
-            p.view_xz()
-            file_name = self.get_new_file_name()
-            self.all_figure_paths.append(file_name)
-            p.screenshot(file_name)
-        else:
+            p.view_isometric()
+            for beam in beam_ids:
+                beam_select(beam)
+                file_name =  self.get_new_file_name()
+                self.all_figure_paths.append(file_name)
+                p.screenshot(file_name)
+        else: #interactive plot for users
             p.show()
+
+
     def rotationMatrixToEulerAngles(self,R) :
 
         sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])

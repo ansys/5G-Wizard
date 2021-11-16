@@ -333,7 +333,7 @@ class PD():
             if pd_type.lower()=='pd_n_plus':
                 pd_local = fields_data.get_PD_n_plus_local(results,surface_normal)
             if pd_type.lower()=='pd_tot_plus':
-                pd_local.lower()== fields_data.get_PD_tot_plus_local(results,surface_normal)
+                pd_local = fields_data.get_PD_tot_plus_local(results,surface_normal)
             if pd_type.lower()=='pd_mod_plus':
                 pd_local = fields_data.get_PD_mod_plus_local(results,surface_normal)
     
@@ -465,6 +465,16 @@ class PD():
             #                             show_plot = show_plots)      
             
             
+            #first call to this function will generate a bunch of pre defined
+            #images. 
+            reports.field_plot_3d_pyvista(fields_data,
+                                        save_name ="Interactive_PD_Pattern",
+                                        save_plot=True,
+                                        show_plot=False,
+                                        output_path = '',
+                                        show_cad=True)
+
+            #second call will allow user interaction
             reports.field_plot_3d_pyvista(fields_data,
                                         save_name ="Interactive_PD_Pattern",
                                         save_plot=True,

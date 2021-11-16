@@ -348,9 +348,21 @@ class CDF():
                 rotation = np.reshape(rotation,(3,3)).T 
                 ff_plot_pos = translation
                 
+            #first call to this function will generate a bunch of pre defined
+            #images
             reports.polar_plot_3d_pyvista(envelope_pattern,
                                         save_name ="Interactive_Envelope_Pattern",
-                                        show_plot=show_plot,
+                                        show_plot=False,
+                                        output_path = '',
+                                        dB=True,
+                                        show_cad=True,
+                                        position =translation,
+                                        rotation=rotation)
+            
+            #second call will allow user interaction
+            reports.polar_plot_3d_pyvista(envelope_pattern,
+                                        save_name ="Interactive_Envelope_Pattern",
+                                        show_plot=True,
                                         output_path = '',
                                         dB=True,
                                         show_cad=True,

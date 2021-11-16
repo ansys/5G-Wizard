@@ -33,10 +33,10 @@ def run_pd(aedtapp):
         #codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
         codebook_path = './example_projects/CodebookExample_Hpol.csv'
 
-        selected_eval_surf = '5mm_Surface'
+        selected_eval_surf = '50mm_Surface'
         selected_area = '1cm^2' #area in cm^2 as a string
         selected_pd_type = 'PD_n_plus'
-        renormalize = True
+        renormalize = False
         renorm_values= [1,.5,1,.5,.1]
     
         wizard.freq = selected_freq

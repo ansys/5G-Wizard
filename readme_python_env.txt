@@ -5,7 +5,7 @@ Install anaconda:
 https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
 
 ###################
-#act
+#
 # Create a anaconda envionrment
 #
 # conda create -n 5g_wizard python=3.8
@@ -19,4 +19,13 @@ https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
 pip install -r requirements.txt
 
 
-# You can use any IDE, if you want to use Spyder, install by typing >> conda install spyder=5.1.5
+# You can use any IDE, if you want to use Spyder, 
+#install the windows standalone applications from: https://docs.spyder-ide.org/current/installation.html
+#you will also need to install
+pip install spyder-kernels
+
+#once this is installed, open up spyder and go to the menu Tool> Preferences > Python Interpreter
+#set the python interpreter to the one used in your anaconda environment, something like...
+C:\Users\<username>\Anaconda3\envs\5g_wizard\python.exe
+
+#within spyder you can open 5G_Wizard_Standalong_NoGUI.py or 5G_Wizard.py and run the script
