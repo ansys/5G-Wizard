@@ -404,6 +404,11 @@ class PD():
             
             csv_name = output_path + 'JobID_' + str(job) + '.csv'
             utils.write_csv(pd_max_dict,csv_name)
+<<<<<<< HEAD
+=======
+            csv_name_sorted = output_path + 'JobID_' + str(job) + '_SortedByPD.csv'
+            utils.write_csv(pd_max_dict,csv_name_sorted,sort_by_pd=True)
+>>>>>>> 89bf2e89954d81e549986bc19e13ed722cb8ab62
             ##################################################################
             #Visualizing results
             #################################################################
@@ -458,6 +463,7 @@ class PD():
             #                             save_name=save_name,
             #                             save_plot=True,
             #                             title='PD Max Local',
+<<<<<<< HEAD
             #                             show_plot = show_plots)      
             
             
@@ -467,6 +473,9 @@ class PD():
                                         show_plot=True,
                                         output_path = '',
                                         show_cad=True)
+=======
+            #                             show_plot = show_plots)       
+>>>>>>> 89bf2e89954d81e549986bc19e13ed722cb8ab62
             if close_reports:
                 reports.close_all_reports()
             

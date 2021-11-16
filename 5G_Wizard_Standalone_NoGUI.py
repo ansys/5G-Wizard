@@ -95,8 +95,14 @@ def run_validate():
 if __name__ == '__main__':
     with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
         aedtapp = Hfss(specified_version=version)
+<<<<<<< HEAD
     wizard_pd = run_pd(aedtapp)
     wizard_cdf = run_cdf(aedtapp)
+=======
+
+    wizard_pd = run_pd(aedtapp)
+    #wizard_cdf = run_cdf(aedtapp)
+>>>>>>> 89bf2e89954d81e549986bc19e13ed722cb8ab62
     #run_validate()
     
     

@@ -13,3 +13,4 @@ build/
 dist/output/
 *.old
 test_html.py
+*.pptx
