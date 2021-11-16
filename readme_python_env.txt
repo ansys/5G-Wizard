@@ -8,8 +8,8 @@ https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
 #act
 # Create a anaconda envionrment
 #
-# conda create -n 5GWizard python=3.8
-# activate 5GWizard 
+# conda create -n 5g_wizard python=3.8
+# activate 5g_wizard 
 #
 ###################
 

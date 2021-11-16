@@ -228,7 +228,7 @@ class CDF():
                 fields_data.renormalize_dB = self.renormalize_dB
                 fields_data.renorm_value = self.renorm_value
             else:
-                print("CDF renormalization not applied when using multi-run state")
+                print("INFO: CDF renormalization not applied when using multi-run state")
             
             fields_data.unique_beams = codebook.unique_beams
             

@@ -93,8 +93,7 @@ def dict_with_numpy_to_lists(input_dict):
                     
     return input_dict
     
-def write_csv(data,path='./out.csv'):
-    pass
+
 def write_dictionary_to_json(path='./out.json',dict_to_write=None):
     if dict_to_write:
         with open(path,'w',encoding='utf-8') as f:

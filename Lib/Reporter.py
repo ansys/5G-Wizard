@@ -468,7 +468,7 @@ class Report_Module():
         #plot everything together
 
         rotation_euler = self.rotationMatrixToEulerAngles(rotation)*180/np.pi
-        #ff_mesh.rotate_vector(rotation_vector)
+
         if show_plot:
             p = pv.Plotter()
         else:
@@ -493,8 +493,6 @@ class Report_Module():
                 help_text.VisibilityOff()
                 #p.view_xy()
                 p.update()
-                increment=1
-                #print("Window size ", p.window_size)
                 file_name = self.get_new_file_name()
                 p.screenshot(file_name, transparent_background=False)
                 scale_slider.EnabledOn()
@@ -502,6 +500,7 @@ class Report_Module():
                 cad_toggle.EnabledOn()
                 help_text.VisibilityOn()
                 p.update()
+                print('Screenshot Saved: ' + file_name)
                 self.all_figure_paths.append(file_name)
             
             scale_slider = p.add_slider_widget(scale, [0, 10], title='Scale Plot',value=5)
@@ -533,7 +532,7 @@ class Report_Module():
                 cad = p.add_mesh(cad_mesh,scalars=color_display_type,show_scalar_bar=False,opacity=0.5)
                 cad_toggle = p.add_checkbox_button_widget(toggle_vis_cad, value=True,position=(10,70))
             else:
-                Print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
+                print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
         help_text = p.add_text("Press \'S\' to Generate Screenshot", position='upper_left', font_size=18, color=None)
         p.add_key_event("s", screenshot)
         
@@ -613,20 +612,20 @@ class Report_Module():
 
             def screenshot():
                 beam_slider.EnabledOff()
-                ff_toggle.Off()
                 cad_toggle.EnabledOff()
                 help_text.VisibilityOff()
                 #p.view_xy()
                 p.update()
-                increment=1
+
                 #print("Window size ", p.window_size)
                 file_name = self.get_new_file_name()
                 p.screenshot(file_name, transparent_background=False)
                 beam_slider.EnabledOn()
-                ff_toggle.EnabledOn()
+
                 cad_toggle.EnabledOn()
                 help_text.VisibilityOn()
                 p.update()
+                print('Screenshot Saved: ' + file_name)
                 self.all_figure_paths.append(file_name)
             
             #import geometry
@@ -656,7 +655,7 @@ class Report_Module():
                 cad = p.add_mesh(cad_mesh,scalars=color_display_type,show_scalar_bar=False,opacity=0.5)
                 cad_toggle = p.add_checkbox_button_widget(toggle_vis_cad, value=True,position=(10,70))
             else:
-                Print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
+                print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
                 
             #add widgets
             beam_slider = p.add_slider_widget(beam_select, [first_beam, last_beam], title='Beam Select',value=0)
@@ -667,7 +666,7 @@ class Report_Module():
         if not show_plot:
             file_name =  self.get_new_file_name()
             self.all_figure_paths.append(file_name)
-            scale_slider.EnabledOff()
+            beam_slider.EnabledOff()
             help_text.VisibilityOff()
             p.screenshot(file_name)
             file_name = self.get_new_file_name()
