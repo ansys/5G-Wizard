@@ -67,7 +67,7 @@ class Load_NF_Fields():
                     data = np.loadtxt(file,skiprows=3,delimiter=',')
                 else:
                     valid_nfd=False
-                #pos = data[:,1:4]
+                pos_in_global = data[:,1:4]
                 #e_fields = data[:,4:10]
                 #h_fields = data[:,10:16]
                 
@@ -85,7 +85,8 @@ class Load_NF_Fields():
                 temp_dict['E'] = e_field
                 temp_dict['H']=h_field
                 self.data_dict[port] = temp_dict
-    
+        pos_in_global = np.reshape(pos_in_global, (width_n,length_n,3))
+        self.pos_in_global = pos_in_global
         self.pos = pos
         self.num_samples = len(pos)
         self.solution_type = 'DrivenModal'
@@ -411,7 +412,7 @@ class Load_NF_Fields():
             print('Averaging Calculation Time: ' + str(np.round(time_to_average,2)))
             p_avg_all_beams[beam_id] = p_avg
                                 
-
+        self.p_avg_all_beams = p_avg_all_beams
         return p_avg_all_beams
 
 

@@ -402,8 +402,8 @@ class PD():
             
             pd_max_local = fields_data.get_max_for_each_beam(pd_local,label='Local') #label is just to display in console
             
-
-
+            csv_name = output_path + 'JobID_' + str(job) + '.csv'
+            utils.write_csv(pd_max_dict,csv_name)
             ##################################################################
             #Visualizing results
             #################################################################
@@ -412,20 +412,22 @@ class PD():
             
             #job_id is passed in becuase it is used to determine relativ path
             reports = Report_Module(self.aedtapp,self.base_output_path,job_id = job)
-            show_plots=True
+            show_plots=False #too many plots are being created for some codebooks. Will not display them for now
+            close_reports = True
             if self.multirun_state:
                 show_plots = False
+                close_reports=True
             #plotting peak values versus beam id
             # save_name = 'max_'+ pd_type + '_bar_' + report_name_base_str
             # full_path = reports.max_vs_beam_bar(pd_max,save_name=save_name,save_plot=True,show_plot = show_plots)
             
 
 
-            if self.multirun_state:
+            if close_reports:
                 reports.close_all_reports()
             save_name = 'max_'+ pd_type + '_line_' + report_name_base_str
             reports.max_vs_beam_line(pd_max,save_name=save_name,save_plot=True,show_plot = show_plots)
-            if self.multirun_state:
+            if close_reports:
                 reports.close_all_reports()
             
             
@@ -436,7 +438,7 @@ class PD():
                 save_name = 'avg_' + pd_type + '_beamid_' + str(beam) + '_' + report_name_base_str
                 reports.plot_pd(pd,fields_data.pos,title=plot_title, save_plot=True,save_name=save_name)
             
-            if self.multirun_state:
+            if close_reports:
                 reports.close_all_reports()
             
             #plot the local PD for every beamID
@@ -456,8 +458,16 @@ class PD():
             #                             save_name=save_name,
             #                             save_plot=True,
             #                             title='PD Max Local',
-            #                             show_plot = show_plots)       
-            if self.multirun_state:
+            #                             show_plot = show_plots)      
+            
+            
+            reports.field_plot_3d_pyvista(fields_data,
+                                        save_name ="Interactive_PD_Pattern",
+                                        save_plot=True,
+                                        show_plot=True,
+                                        output_path = '',
+                                        show_cad=True)
+            if close_reports:
                 reports.close_all_reports()
             
             #write all image locations to dictionary
@@ -474,8 +484,8 @@ class PD():
         #                  save_name=save_name,
         #                  override_path =self.base_output_path )
         
-        if self.multirun_state:
-                reports.close_all_reports()
+        if close_reports:
+            reports.close_all_reports()
         
         
         utils.write_dictionary_to_json(path=self.base_output_path+self.summary_file_name,

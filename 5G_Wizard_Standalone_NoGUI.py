@@ -34,7 +34,6 @@ def run_pd(aedtapp):
         codebook_path = './example_projects/CodebookExample_Hpol.csv'
 
         selected_eval_surf = '5mm_Surface'
-        #selected_eval_surf = '25mm_Surface'
         selected_area = '1cm^2' #area in cm^2 as a string
         selected_pd_type = 'PD_n_plus'
         renormalize = True
@@ -66,7 +65,7 @@ def run_cdf(aedtapp):
         selected_design = '4x1_array2'
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
-        renormalize = True
+        renormalize = False
         renormalize_dB = True
         renorm_value= 10
         
@@ -96,8 +95,7 @@ def run_validate():
 if __name__ == '__main__':
     with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
         aedtapp = Hfss(specified_version=version)
-
-    #wizard_pd = run_pd(aedtapp)
+    wizard_pd = run_pd(aedtapp)
     wizard_cdf = run_cdf(aedtapp)
     #run_validate()
     

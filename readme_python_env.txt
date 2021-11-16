@@ -5,22 +5,18 @@ Install anaconda:
 https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
 
 ###################
-#
+#act
 # Create a anaconda envionrment
 #
-# conda create -n env_name python=3.8
-# activate env_name 
+# conda create -n 5GWizard python=3.8
+# activate 5GWizard 
 #
 ###################
 
 #Install packages, by typing the following in your anaconda prompt
+#browse to 5G wizard directory and run
 
-pip install pywin32
-pip install numpy
-pip install h5py
-pip install -U matplotlib
-pip install pyaedt==0.3.25
-pip install scipy
-pip install Jinja2
+pip install -r requirements.txt
 
-# You can use any IDE, if you want to use Spyder, install by typing >> conda install spyder=5.0.5
+
+# You can use any IDE, if you want to use Spyder, install by typing >> conda install spyder=5.1.5

@@ -10,6 +10,7 @@ import os
 import sys
 import json
 import numpy as np
+import pyvista as pv
 from Lib.Codebook import Codebook_Utils
 from Lib.NearField_Setup import NearField_Utils
 from Lib.FarField_Setup import FarField_Utils
@@ -315,9 +316,51 @@ class CDF():
             if self.multirun_state:
                     reports.close_all_reports()
 
+
+            
+            #plot envelope pattern on geometry
+            
+
+            reports.polar_plot_3d(envelope_pattern,
+                                            save_plot=True,
+                                            show_plot=show_plot,
+                                            output_path = '',
+                                            dB=True)
+
+            if self.cs_name=='Global':
+                translation = [0,0,0]
+                rotation = np.eye(3)
+            else:
+                oEditor = self.aedtapp.odesign.SetActiveEditor("3D Modeler")
+                self.aedtapp.modeler.set_working_coordinate_system(self.cs_name)
+                cs_transform = oEditor.GetActiveCoordinateSystemTransform()
+                #this retursn a string like ["$begin ''\n\t$begin 'Transformation'\n\t\tAffineMatrix[9: -1.60812e-16, 1, 0, -1, -1.60812e-16, 0, 0, 0, 1]\n\t\tTranslation[3: 167.5, -90, 5.6]\n\t$end 'Transformation'\n$end ''\n"]
+                #need to parse out only the tranlsation part
+                translation = cs_transform[0].split('Translation')[1].split(':')[1].split(']')[0]
+                translation = translation.replace(" ","")
+                translation = translation.split(',')
+                translation = np.array([float(i) for i in translation])
+    
+                rotation = cs_transform[0].split('Transformation')[1].split(':')[1].split(']')[0]
+                rotation = rotation.replace(" ","")
+                rotation = rotation.split(",")
+                rotation = np.array([float(i) for i in rotation])
+                rotation = np.reshape(rotation,(3,3)).T 
+                ff_plot_pos = translation
+                
+            reports.polar_plot_3d_pyvista(envelope_pattern,
+                                        save_name ="Interactive_Envelope_Pattern",
+                                        show_plot=show_plot,
+                                        output_path = '',
+                                        dB=True,
+                                        show_cad=True,
+                                        position =translation,
+                                        rotation=rotation)
+            
             temp_summary['Paths_To_Images'] = reports.all_figure_paths
             cdf_dict_summary_all_jobs[job] = temp_summary 
             reports.all_figure_paths = [] #clear the figures since we just saved them to the summary 
+            
             
         if len(job_ids)>1:
             envelope_pattern_all = envelope_pattern_all_jobs(cdf_dict_all_jobs,

@@ -9,7 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from datetime import date
-
+from matplotlib import cm
+import pyvista as pv
+import math
 
 
 class Report_Module():
@@ -18,6 +20,7 @@ class Report_Module():
         self.full_path = output_path  + 'JobID_' + str(job_id) + '/'
         self.relative_path = './JobID_' + str(job_id) + '/'
         self.output_path = output_path
+        self.absolute_path = os.path.abspath(self.full_path)
         self.aedtapp = aedtapp
 
         self.overwrite = overwrite
@@ -350,3 +353,356 @@ class Report_Module():
             self.all_figure_paths.append(save_name_relative)
         if show_plot:
             plt.show()
+
+
+    def polar_plot_3d(self,data,
+                        save_name ="3D_Polar_Plot_Envelope",
+                        save_plot=True,
+                        show_plot=True,
+                        output_path = '',
+                        dB=True,
+                        multiple_angles = True):
+    
+        if dB:
+            ff_data = 10*np.log10(data['RealizedGain'])
+            #renormalize to 0 and 1 
+            ff_max_dB = np.max(ff_data)
+            ff_min_dB = np.min(ff_data)
+            ff_data_renorm = (ff_data-ff_min_dB)/(ff_max_dB-ff_min_dB)
+        else:
+            ff_data = data['RealizedGain']
+            #renormalize to 0 and 1 
+            ff_max = np.max(ff_data)
+            ff_min = np.min(ff_data)
+            ff_data_renorm = (ff_data-ff_max)/(ff_max-ff_min)
+        legend = []
+        
+        theta = np.deg2rad(np.array(data['Theta']))
+        phi = np.deg2rad(np.array(data['Phi']))
+        phi_grid,theta_grid = np.meshgrid(phi, theta)
+        
+        r = np.reshape(ff_data_renorm,(len(data['Theta']),len(data['Phi'])))
+        
+        x = r * np.sin(theta_grid) * np.cos(phi_grid)
+        y = r * np.sin(theta_grid) * np.sin(phi_grid)
+        z = r * np.cos(theta_grid)
+        
+        fig1 = plt.figure()
+        ax1 = fig1.add_subplot(1, 1, 1, projection="3d")
+        my_col = cm.jet(r/np.amax(r))
+        plot = ax1.plot_surface(
+            x, y, z, rstride=1, cstride=1, cmap=plt.get_cmap("jet"),facecolors = my_col, linewidth=0, antialiased=True, alpha=0.9)
+        #fig1.set_size_inches(22.5, 22.5)
+        plt.colorbar(plot)
+        
+        if output_path  == '':
+            output_path = self.output_path
+        else:
+            output_path = self.full_path
+
+
+        if save_plot:
+           if multiple_angles:
+               list_of_observations= [(0,0),(0,90),(0,180),(0,270),(90,0),(45,45),(45,-45),(-45,-45)]
+               for n, observe in enumerate(list_of_observations):
+                   ax1.view_init(elev=observe[0], azim=observe[1])
+                   save_name = save_name + '_' + str(n) + '.png'
+                   save_name_full = self.full_path + save_name
+                   save_name_relative = self.relative_path + save_name 
+                   plt.savefig(save_name_full,dpi=300)
+                   self.all_figure_paths.append(save_name_relative)
+           else:
+                save_name_full = self.full_path + save_name + '.png'
+                save_name_relative = self.relative_path + save_name + '.png'
+                plt.savefig(save_name_full,dpi=300)
+                self.all_figure_paths.append(save_name_relative)
+        if show_plot:
+            plt.show()
+            
+    def polar_plot_3d_pyvista(self,data,
+                            save_name ="Interactive_Envelope_Pattern",
+                            show_plot=True,
+                            output_path = '',
+                            dB=True,
+                            show_cad=True,
+                            position = np.zeros(3),
+                            rotation = np.eye(3)):
+        if dB:
+            ff_data = 10*np.log10(data['RealizedGain'])
+            #renormalize to 0 and 1 
+            ff_max_dB = np.max(ff_data)
+            ff_min_dB = np.min(ff_data)
+            ff_data_renorm = (ff_data-ff_min_dB)/(ff_max_dB-ff_min_dB)
+            display_name = "RealizedGain (dB)"
+        else:
+            ff_data = data['RealizedGain']
+            #renormalize to 0 and 1 
+            ff_max = np.max(ff_data)
+            ff_min = np.min(ff_data)
+            ff_data_renorm = (ff_data-ff_max)/(ff_max-ff_min)
+            display_name = "RealizedGain"
+            
+        theta = np.deg2rad(np.array(data['Theta']))
+        phi = np.deg2rad(np.array(data['Phi']))
+        phi_grid,theta_grid = np.meshgrid(phi, theta)
+        
+        r_no_renorm = np.reshape(ff_data,(len(data['Theta']),len(data['Phi'])))
+        r = np.reshape(ff_data_renorm,(len(data['Theta']),len(data['Phi'])))
+        
+        x = r * np.sin(theta_grid) * np.cos(phi_grid)
+        y = r * np.sin(theta_grid) * np.sin(phi_grid)
+        z = r * np.cos(theta_grid)
+        
+        #for color display
+        mag = np.ndarray.flatten(r_no_renorm,order='F')
+        
+        # create a mesh that can be displayed
+        ff_mesh = pv.StructuredGrid(x,y,z)
+        #ff_mesh.scale(ff_scale)
+        #ff_mesh.translate([float(position[0]),float(position[1]),float(position[2])])
+        ff_mesh[display_name] = mag
+        
+
+
+
+        #plot everything together
+
+        rotation_euler = self.rotationMatrixToEulerAngles(rotation)*180/np.pi
+        #ff_mesh.rotate_vector(rotation_vector)
+        if show_plot:
+            p = pv.Plotter()
+        else:
+            p = pv.Plotter(off_screen=True)
+        ff = p.add_mesh(ff_mesh,smooth_shading=True,cmap="jet")
+        if show_cad:
+            def toggle_vis_ff(flag):
+                ff.SetVisibility(flag)
+            def toggle_vis_cad(flag):
+                cad.SetVisibility(flag)
+            def scale(value=1):
+                ff.SetScale(value,value,value)
+                ff.SetPosition(position)
+                ff.SetOrientation(rotation_euler)
+                #p.add_mesh(ff_mesh, smooth_shading=True,cmap="jet")
+                return
+            
+            def screenshot():
+                scale_slider.EnabledOff()
+                ff_toggle.Off()
+                cad_toggle.EnabledOff()
+                help_text.VisibilityOff()
+                #p.view_xy()
+                p.update()
+                increment=1
+                #print("Window size ", p.window_size)
+                file_name = self.get_new_file_name()
+                p.screenshot(file_name, transparent_background=False)
+                scale_slider.EnabledOn()
+                ff_toggle.EnabledOn()
+                cad_toggle.EnabledOn()
+                help_text.VisibilityOn()
+                p.update()
+                self.all_figure_paths.append(file_name)
+            
+            scale_slider = p.add_slider_widget(scale, [0, 10], title='Scale Plot',value=5)
+            ff_toggle = p.add_checkbox_button_widget(toggle_vis_ff, value=True)
+            oEditor = self.aedtapp.odesign.SetActiveEditor("3D Modeler")
+            cad_file = self.absolute_path +'/geometry.obj'
+            
+
+            non_model_objects = oEditor.GetObjectsInGroup('Non Model')
+            all_objects = oEditor.GetMatchedObjectName('*')
+            
+            s = set(non_model_objects)
+            model_objects = [x for x in all_objects if x not in s]
+            
+            objects_to_display = []
+            for each in model_objects:
+                if 'radi' not in each.lower():
+                    objects_to_display.append(each)
+            print("INFO: Exporting Geometry for Display")
+            oEditor.ExportModelMeshToFile(cad_file, objects_to_display)
+            print("...Done")
+            if os.path.exists(cad_file):
+                cad_mesh = pv.read(cad_file)
+                color_display_type = ''
+                if 'MaterialIds' in cad_mesh.array_names:
+                    color_display_type = cad_mesh['MaterialIds']
+                else:
+                    color_display_type=None
+                cad = p.add_mesh(cad_mesh,scalars=color_display_type,show_scalar_bar=False,opacity=0.5)
+                cad_toggle = p.add_checkbox_button_widget(toggle_vis_cad, value=True,position=(10,70))
+            else:
+                Print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
+        help_text = p.add_text("Press \'S\' to Generate Screenshot", position='upper_left', font_size=18, color=None)
+        p.add_key_event("s", screenshot)
+        
+        if not show_plot:
+            file_name =  self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            scale_slider.EnabledOff()
+            help_text.VisibilityOff()
+            p.screenshot(file_name)
+            file_name = self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            p.view_xy()
+            p.screenshot(file_name)
+            p.view_yz()
+            file_name = self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            p.screenshot(file_name)
+            p.view_xz()
+            file_name = self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            p.screenshot(file_name)
+        else:
+            p.show()
+        
+        
+    def field_plot_3d_pyvista(self,fields_data,
+                            save_name ="Interactive_PD_Plot",
+                            save_plot=True,
+                            show_plot=True,
+                            output_path = '',
+                            show_cad=True):
+
+
+        data=fields_data.p_avg_all_beams[0]
+        beam_ids = list(fields_data.p_avg_all_beams.keys())
+        xyz = []
+        for xn in range(fields_data.pos_in_global.shape[0]):
+            for yn in range(fields_data.pos_in_global.shape[1]):
+                xyz.append([fields_data.pos_in_global[xn][yn][0],fields_data.pos_in_global[xn][yn][1],fields_data.pos_in_global[xn][yn][2]])
+        
+        xyz =np.array(xyz)*1000 #need to double check if obj is always export in mm or meter, or something else
+
+        pos = np.ndarray.flatten(fields_data.pos_in_global,order='C')
+
+        fields_mesh = pv.PolyData(xyz)
+        mag = np.ndarray.flatten(fields_data.p_avg_all_beams[beam_ids[0]],order='C')
+        fields_mesh[str(beam_ids[0])] = mag
+
+        pd_surface = fields_mesh.delaunay_2d()
+
+        if show_plot:
+            p = pv.Plotter()
+        else:
+            p = pv.Plotter(off_screen=True)
+        
+
+        p.add_mesh(pd_surface,smooth_shading=True,cmap="jet",opacity=0.5,name='PD')
+                
+        first_beam = np.min(beam_ids)
+        last_beam = np.max(beam_ids)
+        beam_text = p.add_text("Beam ID: 0", position='lower_left', font_size=18, color=None)
+        def beam_select(value=1):
+            beam_select = str(int(value))
+            p.remove_actor('PD')
+            mag = np.ndarray.flatten(fields_data.p_avg_all_beams[int(value)],order='C')
+            fields_mesh[str(beam_ids[0])] = mag
+            pd_surface = fields_mesh.delaunay_2d()
+            p.add_mesh(pd_surface,smooth_shading=True,cmap="jet",opacity=0.5,name='PD')
+            beam_text.ClearAllTexts()
+            beam_text.SetText(0,"Beam ID: " + beam_select)
+            p.update()
+            return
+        
+        if show_cad:
+            def toggle_vis_cad(flag):
+                cad.SetVisibility(flag)
+
+            def screenshot():
+                beam_slider.EnabledOff()
+                ff_toggle.Off()
+                cad_toggle.EnabledOff()
+                help_text.VisibilityOff()
+                #p.view_xy()
+                p.update()
+                increment=1
+                #print("Window size ", p.window_size)
+                file_name = self.get_new_file_name()
+                p.screenshot(file_name, transparent_background=False)
+                beam_slider.EnabledOn()
+                ff_toggle.EnabledOn()
+                cad_toggle.EnabledOn()
+                help_text.VisibilityOn()
+                p.update()
+                self.all_figure_paths.append(file_name)
+            
+            #import geometry
+            oEditor = self.aedtapp.odesign.SetActiveEditor("3D Modeler")
+            cad_file = self.absolute_path +'/geometry.obj'
+            
+            non_model_objects = oEditor.GetObjectsInGroup('Non Model')
+            all_objects = oEditor.GetMatchedObjectName('*')
+            
+            s = set(non_model_objects)
+            model_objects = [x for x in all_objects if x not in s]
+            
+            objects_to_display = []
+            for each in model_objects:
+                if 'radi' not in each.lower():
+                    objects_to_display.append(each)
+            print("INFO: Exporting Geometry for Display")
+            oEditor.ExportModelMeshToFile(cad_file, objects_to_display)
+            print("...Done")
+            if os.path.exists(cad_file):
+                cad_mesh = pv.read(cad_file)
+                color_display_type = ''
+                if 'MaterialIds' in cad_mesh.array_names:
+                    color_display_type = cad_mesh['MaterialIds']
+                else:
+                    color_display_type=None
+                cad = p.add_mesh(cad_mesh,scalars=color_display_type,show_scalar_bar=False,opacity=0.5)
+                cad_toggle = p.add_checkbox_button_widget(toggle_vis_cad, value=True,position=(10,70))
+            else:
+                Print('WARNING: Unable to display CAD Geometry, ' + cad_file + ' is not found')
+                
+            #add widgets
+            beam_slider = p.add_slider_widget(beam_select, [first_beam, last_beam], title='Beam Select',value=0)
+        help_text = p.add_text("Press \'S\' to Generate Screenshot", position='upper_left', font_size=18, color=None)
+        
+        p.add_key_event("s", screenshot)
+        
+        if not show_plot:
+            file_name =  self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            scale_slider.EnabledOff()
+            help_text.VisibilityOff()
+            p.screenshot(file_name)
+            file_name = self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            p.view_xy()
+            p.screenshot(file_name)
+            p.view_yz()
+            file_name = self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            p.screenshot(file_name)
+            p.view_xz()
+            file_name = self.get_new_file_name()
+            self.all_figure_paths.append(file_name)
+            p.screenshot(file_name)
+        else:
+            p.show()
+    def rotationMatrixToEulerAngles(self,R) :
+
+        sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
+        singular = sy < 1e-6
+        if  not singular :
+            x = math.atan2(R[2,1] , R[2,2])
+            y = math.atan2(-R[2,0], sy)
+            z = math.atan2(R[1,0], R[0,0])
+        else :
+            x = math.atan2(-R[1,2], R[1,1])
+            y = math.atan2(-R[2,0], sy)
+            z = 0
+        return np.array([x, y, z])
+    
+    def get_new_file_name(self):
+        increment=1
+        #print("Window size ", p.window_size)
+        file_name = self.absolute_path + "\\geo_envelope_overlay" + str(increment) + ".png"
+        while os.path.exists(file_name):
+            increment+=1
+            file_name = self.absolute_path + "\\geo_envelope_overlay" + str(increment) + ".png"
+        return file_name
