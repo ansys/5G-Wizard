@@ -503,10 +503,18 @@ class Report_Module():
                 print('Screenshot Saved: ' + file_name)
                 self.all_figure_paths.append(file_name)
             
-            scale_slider = p.add_slider_widget(scale, [0, 10], title='Scale Plot',value=5)
-            ff_toggle = p.add_checkbox_button_widget(toggle_vis_ff, value=True)
+
             oEditor = self.aedtapp.odesign.SetActiveEditor("3D Modeler")
+            bounding_box = oEditor.GetModelBoundingBox()
+            xmax = float(bounding_box[3])-float(bounding_box[0])
+            ymax = float(bounding_box[4])-float(bounding_box[1])
+            zmax = float(bounding_box[5])-float(bounding_box[2])
+            all_max = np.max(np.array([xmax,ymax,zmax]))
             cad_file = self.absolute_path +'/geometry.obj'
+            
+            slider_max= int(np.ceil(all_max*1.1))
+            scale_slider = p.add_slider_widget(scale, [0, slider_max], title='Scale Plot',value=int(slider_max/2))
+            ff_toggle = p.add_checkbox_button_widget(toggle_vis_ff, value=True)
             
 
             non_model_objects = oEditor.GetObjectsInGroup('Non Model')
@@ -516,9 +524,17 @@ class Report_Module():
             model_objects = [x for x in all_objects if x not in s]
             
             objects_to_display = []
-            for each in model_objects:
-                if 'radi' not in each.lower():
-                    objects_to_display.append(each)
+            selected_objects = oEditor.GetSelections()
+            print('TIP: Geometry selected in AEDT will be displayed along with far field pattern')
+            print('TIP: IF no selected geometry, all model objects will be displayed')
+            if len(selected_objects)>=1:
+                objects_to_display = selected_objects
+            else:
+                for each in model_objects:
+                    if ('radiatingsurface' in each.lower() or 'air' in each.lower() or 'airbox' in each.lower()):
+                        pass
+                    else:
+                        objects_to_display.append(each)
             print("INFO: Exporting Geometry for Display")
             oEditor.ExportModelMeshToFile(cad_file, objects_to_display)
             print("...Done")
