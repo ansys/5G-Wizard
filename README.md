@@ -124,16 +124,19 @@ The result of the averaging algorithm implemented in the 5G wizard can be compar
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Download stand-alone executable, or clone repository to run script version of the 5G wizard.
+Download stand-alone executable from releases, or clone repository to run script version of the 5G wizard.
 
 ### Prerequisites
 
-To run the 5G wizard, you must have a local licenced copy of AEDT 2021 R2.
+To run the 5G wizard, you must have a local licenced copy of AEDT 2021 R2 or 2022 R1.
 
 
 ### Installation
 
 The 5G wizard can be run by executing the standalone 5G_Wizard.exe or by using one of the scripts (5G_Wizard_Standalone_NoGUI.py or 5G_Wizard.py)
+
+5G Wizard v0.2.4 or higher for Ansys Electronics Desktop 2022 R1
+5G Wizard v0.2.3 or lower for Ansys Electronics Desktop 2021 R2
 
 
 1. Clone the repo
@@ -141,7 +144,7 @@ The 5G wizard can be run by executing the standalone 5G_Wizard.exe or by using o
    git clone https://github.com/pyansys/5G-Wizard.git
    ```
 
-If you want to run the 5G wizard as a script (not using the executable), a python environment will need to be configured. See README_python_env.txt for an example of how to setup a python envionrment. If you want to built the applicaiton as an exe, see README_creating_application.txt.
+If you want to run the 5G wizard as a script (not using the executable), a python environment will need to be configured. See README_python_env.txt for an example of how to setup a python envionrment. If you want to re-build the applicaiton as an exe, see README_creating_application.txt.
 
    ```sh
 	pip install pywin32
@@ -234,10 +237,8 @@ Results will be written to an HTML file located in your specified output directo
 <!-- ROADMAP -->
 ## Roadmap
 
-- [] Feature 1
-- [] Feature 2
-- [] Feature 3
-    - [] Nested Feature
+5G Wizard v0.2.4 or higher for Ansys Electronics Desktop 2022 R1
+5G Wizard v0.2.3 or lower for Ansys Electronics Desktop 2021 R2
 
 See the [open issues](https://github.com/pyansys/5G-Wizard/issues) for a full list of proposed features (and known issues).
 

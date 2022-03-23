@@ -20,7 +20,7 @@ import pyaedt
 from pyaedt import Hfss
 from pyaedt import Desktop
 
-version =  "2021.2"
+version =  "2022.1"
 
 class MainWindow(QDialog):
     def __init__(self,aedtapp):

@@ -14,7 +14,7 @@ from pyaedt import Hfss
 from pyaedt import Desktop
 from Validation import Validate_Reference_Data
 
-version =  "2021.2"
+version =  "2022.1"
 
 def run_pd(aedtapp):
     multi_run_enabled = False

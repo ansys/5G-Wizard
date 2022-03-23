@@ -9,7 +9,7 @@ MarkupSafe==2.0.1
 matplotlib==3.4.3
 numpy==1.21.2
 pefile==2021.9.3
-Pillow==8.3.2
+Pillow==9.0.1
 pyaedt==0.3.25
 pycparser==2.20
 pyinstaller==4.5.1
