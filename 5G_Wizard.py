@@ -55,7 +55,7 @@ class MainWindow(QDialog):
 
         
         #uic.loadUi('gui_v0.ui',self)
-        self.setWindowTitle("Ansys 5G Wizard v0.2: AEDT 2021.2")
+        self.setWindowTitle("Ansys 5G Wizard v0.2: AEDT 2022.1")
 
         self.ui.project_name_input.clear()
         self.ui.project_name_input.addItems(project_names)

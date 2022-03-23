@@ -1,26 +1,11 @@
 I recommend creating a new anaconda enviornment just for doing this, becuase I had an issue with pyqt versions using the same environment that spyder is installed into
 ###################
 #
-# Create a anaconda envionrment
-#
-# conda create -n pyside_env python=3.8
-# activate pyside_env
+# From the 5G python environment
 #
 ###################
 
 
-#install libraries
-pip install pywin32
-pip install pythonnet
-pip install numpy
-pip install h5py
-pip install -U matplotlib
-pip install pyinstaller
-pip install pyaedt==0.3.25
-pip install PySide6
-pip install Jinja2
-
-#if pywin32 not found, try installing with >>conda install -c conda-forge pywin32
 
 ############################
 #
@@ -44,6 +29,6 @@ pyside6-uic gui_v0.ui > gui_v0.py
 from anaconda prompt (with enviroinment active that contains above libs) browse to directory where the python scripts are located
 type:
 
-pyinstaller -F 5G_Wizard.py
+pyinstaller -F 5G_Wizard.spec
 
-This will create an exe. Move the .ui file to the same location as the exe in order to run.
+This will create an exe and the /dist folder

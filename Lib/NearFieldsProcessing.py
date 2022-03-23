@@ -85,8 +85,8 @@ class Load_NF_Fields():
                 temp_dict['E'] = e_field
                 temp_dict['H']=h_field
                 self.data_dict[port] = temp_dict
-        pos_in_global = np.reshape(pos_in_global, (width_n,length_n,3))
-        self.pos_in_global = pos_in_global
+            pos_in_global = np.reshape(pos_in_global, (width_n,length_n,3))
+            self.pos_in_global = pos_in_global
         self.pos = pos
         self.num_samples = len(pos)
         self.solution_type = 'DrivenModal'

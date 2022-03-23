@@ -621,7 +621,7 @@ class Report_Module():
             p.add_mesh(pd_surface,smooth_shading=True,cmap="jet",opacity=0.5,name='PD')
             beam_text.ClearAllTexts()
             beam_text.SetText(0,"Beam ID: " + beam_select)
-            p.update()
+            #p.update()
             return
         
         def screenshot():

@@ -65,6 +65,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#known-issues">Known Issues</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -72,7 +73,6 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -136,6 +136,7 @@ To run the 5G wizard, you must have a local licenced copy of AEDT 2021 R2 or 202
 The 5G wizard can be run by executing the standalone 5G_Wizard.exe or by using one of the scripts (5G_Wizard_Standalone_NoGUI.py or 5G_Wizard.py)
 
 5G Wizard v0.2.4 or higher for Ansys Electronics Desktop 2022 R1
+
 5G Wizard v0.2.3 or lower for Ansys Electronics Desktop 2021 R2
 
 
@@ -146,15 +147,8 @@ The 5G wizard can be run by executing the standalone 5G_Wizard.exe or by using o
 
 If you want to run the 5G wizard as a script (not using the executable), a python environment will need to be configured. See README_python_env.txt for an example of how to setup a python envionrment. If you want to re-build the applicaiton as an exe, see README_creating_application.txt.
 
-   ```sh
-	pip install pywin32
-	pip install numpy
-	pip install h5py
-	pip install -U matplotlib
-	pip install pyaedt==0.3.25
-	pip install scipy
-	pip install Jinja2
-   ```
+
+
 
 Standalone Executable with GUI:
    ```sh
@@ -168,6 +162,10 @@ Script without GUI:
    ```sh
 	5G_Wizard_Standalone_NoGUI.py
    ```
+
+### Known Issues
+
+There is current issue with the stand-alone .exe, very slow to launch on some systems.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -284,14 +282,8 @@ Project Link: [https://github.com/pyansys/5G-Wizard](https://github.com/pyansys/
 
 
 
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
 
-* []()
-* []()
-* []()
 
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 
