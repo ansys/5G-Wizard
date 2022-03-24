@@ -235,8 +235,8 @@ Results will be written to an HTML file located in your specified output directo
 <!-- ROADMAP -->
 ## Roadmap
 
-5G Wizard v0.2.4 or higher for Ansys Electronics Desktop 2022 R1
-5G Wizard v0.2.3 or lower for Ansys Electronics Desktop 2021 R2
+
+
 
 See the [open issues](https://github.com/pyansys/5G-Wizard/issues) for a full list of proposed features (and known issues).
 

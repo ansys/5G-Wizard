@@ -1,12 +1,14 @@
-#Here is one way to get everything up and running. Other options exists, one area that you may want to consider changing is the python envionrment manager. It doesn't matter what evionrment manager you use, as long as you can install all the required packages
+#Here is one way to get everything up and running. Other options exists, one area that you may want to consider changing is the python envionrment manager. It doesn't matter what evionrment manager you use, as long as you can install all the required packages. Check license agreement for anaconda before using, otherwise you can use something like mini-forge (https://github.com/conda-forge/miniforge)
 
 
 Install anaconda:
 https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
 
+
+
 ###################
 #
-# Create a anaconda envionrment
+# Create a conda envionrment
 #
 # conda create -n 5g_wizard python=3.8
 # activate 5g_wizard 
@@ -14,7 +16,7 @@ https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
 ###################
 
 #Install packages, by typing the following in your anaconda prompt
-#browse to 5G wizard directory and run
+#browse to 5G wizard directory and run. If you are using mini-forge, you will first need to install pip, using "conda install pip"
 
 pip install -r requirements.txt
 
@@ -26,6 +28,6 @@ pip install spyder-kernels
 
 #once this is installed, open up spyder and go to the menu Tool> Preferences > Python Interpreter
 #set the python interpreter to the one used in your anaconda environment, something like...
-C:\Users\<username>\Anaconda3\envs\5g_wizard\python.exe
+C:\Users\<username>\<environment_manager>\envs\5g_wizard\python.exe
 
 #within spyder you can open 5G_Wizard_Standalong_NoGUI.py or 5G_Wizard.py and run the script

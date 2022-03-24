@@ -20,7 +20,13 @@ import pyaedt
 from pyaedt import Hfss
 from pyaedt import Desktop
 
-version =  "2022.1"
+
+version_file = 'aedt_version.txt'
+if os.path.exists(version_file):
+    with open(version_file) as f:
+        version = f.readline()
+else:
+    version =  None
 
 class MainWindow(QDialog):
     def __init__(self,aedtapp):

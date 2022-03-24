@@ -57,7 +57,7 @@ scipy==1.7.1
 scooby==0.5.12
 shiboken6==6.2.4
 six==1.16.0
-spyder-kernels==2.2.1
+#spyder-kernels==2.2.1 #if this is included, the exe may not run on some systems
 tornado==6.1
 traitlets==5.1.1
 typing_extensions==4.1.1

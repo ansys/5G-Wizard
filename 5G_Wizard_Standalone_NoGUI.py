@@ -8,13 +8,18 @@ Created on Fri Sep 17 14:47:02 2021
 from Lib.core_pd import PD
 from Lib.core_cdf import CDF
 import Lib.Utillities as utils
-
+import os
 import pyaedt 
 from pyaedt import Hfss
 from pyaedt import Desktop
 from Validation import Validate_Reference_Data
 
-version =  "2022.1"
+version_file = 'aedt_version.txt'
+if os.path.exists(version_file):
+    with open(version_file) as f:
+        version = f.readline()
+else:
+    version =  None
 
 def run_pd(aedtapp):
     multi_run_enabled = False
