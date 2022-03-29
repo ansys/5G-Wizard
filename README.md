@@ -135,10 +135,7 @@ To run the 5G wizard, you must have a local licenced copy of AEDT 2021 R2 or 202
 
 The 5G wizard can be run by executing the standalone 5G_Wizard.exe or by using one of the scripts (5G_Wizard_Standalone_NoGUI.py or 5G_Wizard.py)
 
-5G Wizard v0.2.4 or higher for Ansys Electronics Desktop 2022 R1
-
-5G Wizard v0.2.3 or lower for Ansys Electronics Desktop 2021 R2
-
+If you want to specify which version of AEDT to use, modify the aedt_version.txt file located in the root directory. If this file does not exist
 
 1. Clone the repo
    ```sh
@@ -165,7 +162,7 @@ Script without GUI:
 
 ### Known Issues
 
-There is current issue with the stand-alone .exe, very slow to launch on some systems.
+There is current issue with the stand-alone .exe, very slow to launch on some systems. This is a result of a virus scanner, or windows defender scanning the file and all the extracted temporary files everytime it is launched. A solution is to either add this to exclusions, or move all the contents of the installtion to a folder the exlusions list. To see folders that are excluded, Start > Settings > Update & Security > Windows Security > Virus & threat protection Settings > Manage Settings. From within manage settings, under Exlusions, select Add or remove exclusions. If an exclusion cannot be added, try moving the 5G wizard and all folder to a folder that is already included in the exclusions list.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
