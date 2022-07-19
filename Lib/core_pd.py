@@ -151,7 +151,7 @@ class PD():
             if selected_design not in self.aedtapp.design_list:
                 print('ERROR: Design ' + selected_design + 'Does Not Exist')
                 return False
-            self.aedtapp = Hfss(selected_project,specified_version=self.version)
+            self.aedtapp = Hfss(selected_project,selected_design,specified_version=self.version)
             self.aedtapp.set_active_design(selected_design)
             print('Active Design: ' + selected_design)
             self.solution_type = self.aedtapp.solution_type

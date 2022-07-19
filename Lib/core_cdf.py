@@ -140,7 +140,7 @@ class CDF():
                 print('ERROR: Design ' + selected_design + 'Does Not Exist')
                 return False
             
-            self.aedtapp = Hfss(jobs[job]['Project_Name'],specified_version=self.version)
+            self.aedtapp = Hfss(jobs[job]['Project_Name'],selected_design,specified_version=self.version)
             self.aedtapp.set_active_design(selected_design)
             print('Active Design: ' + selected_design)
             self.solution_type = self.aedtapp.solution_type

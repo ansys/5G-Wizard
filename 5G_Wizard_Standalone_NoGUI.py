@@ -21,7 +21,7 @@ if os.path.exists(version_file):
 else:
     version =  None
 
-def run_pd(aedtapp):
+def run_pd(aedtapp,selected_project,selected_design):
     multi_run_enabled = False
     wizard = PD(aedtapp)
     wizard.version = version
@@ -31,8 +31,8 @@ def run_pd(aedtapp):
 
     else:
         wizard.multirun_state = multi_run_enabled
-        selected_project = '5G_28GHz_AntennaModule'
-        selected_design = '4x1_array2'
+        selected_project = selected_project
+        selected_design = selected_design
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
         #codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
@@ -56,7 +56,7 @@ def run_pd(aedtapp):
         wizard.renorm_values = renorm_values
     wizard.run_pd()
     return wizard
-def run_cdf(aedtapp):
+def run_cdf(aedtapp,selected_project,selected_design):
     multi_run_enabled = False
     wizard = CDF(aedtapp)
     wizard.version = version
@@ -66,8 +66,8 @@ def run_cdf(aedtapp):
 
     else:
         wizard.multirun_state = multi_run_enabled
-        selected_project = '5G_28GHz_AntennaModule'
-        selected_design = '4x1_array2'
+        selected_project = selected_project
+        selected_design = selected_design
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
         renormalize = False
@@ -98,13 +98,16 @@ def run_validate():
     validation_results = validation.run()
 
 if __name__ == '__main__':
-    with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
-        aedtapp = Hfss(specified_version=version)
-    #wizard_pd = run_pd(aedtapp)
-   #wizard_cdf = run_cdf(aedtapp)
+    selected_project = '5G_28GHz_AntennaModule'
+    selected_design = '4x1_array1'
+    #with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
+    with Hfss(selected_project,selected_design,non_graphical=False, new_desktop_session=False,specified_version=version) as aedtapp:
+
+        #wizard_pd = run_pd(aedtapp,selected_project,selected_design)
+        wizard_cdf = run_cdf(aedtapp,selected_project,selected_design)
 
 
-    run_validate()
+    #run_validate()
     
     
 

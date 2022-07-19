@@ -111,8 +111,12 @@ class FarField_Utils():
         print('Exporting Embedded Element Patterns...')
 
         oDesign = self.aedtapp.odesign
-        oModule = oDesign.GetModule("RadField")
         
+        oModule = oDesign.GetModule("BoundarySetup")
+        oModule.SetSinglePhaseCenter("Global")
+        
+        oModule = oDesign.GetModule("RadField")
+
         exported_name_base = 'eep'
         exported_name_map = exported_name_base + '.txt'
         
@@ -124,7 +128,7 @@ class FarField_Utils():
                 "ExportFileName:="    , export_path  + exported_name_base + '.ffd',
                 "SetupName:="        , ff_setup_name,
                 "IntrinsicVariationKey:=", "Freq=\'"+str(freq)+"\'",
-                "DesignVariationKey:="    , "",
+                "DesignVariationKey:="    , oDesign.GetNominalVariation(),
                 "SolutionName:="    , setup_name
             ])
         
@@ -136,7 +140,7 @@ class FarField_Utils():
             
             path_dict={}
             for pattern in lines:
-                if len(pattern)==2:
+                if len(pattern)>=2:
                     port = pattern[0]
                     if ':' in port:
                         port = port.split(':')[0]

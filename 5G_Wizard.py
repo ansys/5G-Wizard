@@ -47,8 +47,9 @@ class MainWindow(QDialog):
 
         project_names = self.gui_params.get_project_names()
         active_project = project_names[0]
-        self.activate_project(active_project)
         design_names = self.gui_params.get_design_names(active_project)
+        self.activate_project(active_project,design_names[0])
+        
         setup_names = self.gui_params.get_solution_setup_names(design_names[0])
         has_solution = self.gui_params.check_if_solution(setup_names[0])
         if has_solution:
@@ -99,8 +100,8 @@ class MainWindow(QDialog):
         self.ui.calculate_cdf.clicked.connect(self.run_cdf_button)
         self.ui.validation_button.clicked.connect(self.run_validation_button)
 
-    def activate_project(self,project_name):
-        self.aedtapp = pyaedt.Hfss(project_name,designname=None,specified_version=version)
+    def activate_project(self,project_name,desig_name=None):
+        self.aedtapp = pyaedt.Hfss(project_name,designname=desig_name,specified_version=version)
         print('project changed: ' + project_name)
         self.gui_params = GUI_Values(self.aedtapp)
     def project_name_changed(self):
@@ -442,8 +443,10 @@ class MainWindow(QDialog):
         validation = Validate_Reference_Data()
         validation_results = validation.run()
 if __name__ == '__main__':
-    with Desktop( specified_version=version,new_desktop_session =False,close_on_exit =False):
-        aedtapp = Hfss(specified_version=version)
+    with Desktop( specified_version=version,new_desktop_session =False,close_on_exit =False) as d:
+        project_list = d.project_list()
+        design_list = d.design_list(project_list[0])
+        aedtapp = Hfss(project_list[0],design_list[0],specified_version=version)
     app = QApplication(sys.argv)
     myApp = MainWindow(aedtapp)
     myApp.show()
