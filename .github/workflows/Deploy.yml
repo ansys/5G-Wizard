@@ -11,7 +11,7 @@ defaults:
 
 env:
   python-version: "3.8"
-  pyinstaller-version: "4.10"
+  pyinstaller-version: "5.2"
   project-name: 5G-Wizard
 
 jobs:
