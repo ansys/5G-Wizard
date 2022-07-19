@@ -49,7 +49,7 @@ jobs:
           python -m pip install PyInstaller==${{ env.pyinstaller-version }} -r requirements.txt
       - name: Run PyInstaller
         run: |
-          pyinstaller -F 5G_Wizard.spec
+          pyinstaller 5G_Wizard.spec
       # This step exists for debugging.  Such as checking if data files were included correctly by PyInstaller.
       - name: List distribution files
         run: |
