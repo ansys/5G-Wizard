@@ -52,7 +52,7 @@ mistune>=0.8.4
 multidict==5.2.0
 nbclassic==0.4.3
 nbclient==0.6.6
-nbconvert==6.5.0
+#nbconvert==6.5.0 #don't think this is being used, causing issues so removed
 nbformat==5.4.0
 nest-asyncio==1.5.5
 notebook-shim==0.1.0
