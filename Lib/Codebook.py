@@ -47,9 +47,60 @@ class Codebook_Utils():
         None.
 
         '''
+
+        codebook_version = self._get_codebook_version(file_name)
+        if codebook_version== 'v1':
+            print('INFO: Codebook detected as v1 formatting')
+            vector_dict, all_ports = self._read_codebook_v1(file_name)
+        elif codebook_version == 'v2':
+            print('INFO: Codebook detected as v2 formatting')
+            vector_dict, all_ports = self._read_codebook_v2(file_name)
+        else:
+            print('ERROR: CODEBOOK VERSION NOT IDENTIFIED, CHECK FORMATING')
+            
+        self.port_names_in_codebook = list(set(all_ports))
+        self.input_vector = vector_dict
+        self.beam_ids = sorted(self.input_vector.keys())
+
+        #list of all beams that are unique, if a beam has a beam pair, no need to calculate
+        #PD again for the second time it shows up in the list. For example if
+        #beam 1 is paired with beam 8. Then we only need to add the fields for
+        #beam1 and beam 8, and store it under beam 1. When beam 8 shows up again
+        #in the codebook, we will just ignore it. This assumes that all beams
+        #and pairs are reciprocal
+        self.unique_beams = list(self.input_vector.keys()) #start with all beams
+        for idx in self.unique_beams:
+            pair_idx = self.input_vector[idx]['Beam_Pair']
+            if pair_idx!=-1:
+                if pair_idx in self.unique_beams:
+                    self.unique_beams.remove(pair_idx)
+
+
+        self.aedtapp = aedtapp
+        path, filename = os.path.split(file_name)
+        filename = filename.replace(".csv","")
+        self.name = filename
+
+    def _get_codebook_version(self,file_name):
+        with open(file_name) as csvfile:
+            header = csvfile.readline()
+            header = header.replace(" ","").replace("\n","")
+            header = header.split(',')
+        if 'PD_Char_Codebook_name' in header:
+            codebook_version = 'v2'
+        else:
+            codebook_version = 'v1'    
+        return codebook_version
+    
+    def _read_codebook_v1(self,file_name):
+        
         all_ports = []
         vector_dict = {}
-        with open(file_name) as csvfile:
+        
+        full_path = os.path.abspath(file_name)
+        base_dir, file_name_only = os.path.split(full_path)
+
+        with open(full_path) as csvfile:
             header = csvfile.readline()
             header = header.replace(" ","").replace("\n","")
             header = header.split(',')
@@ -100,30 +151,81 @@ class Codebook_Utils():
                     
                 beamid = int(row['Beam_ID'])
                 vector_dict[beamid] = temp_dict
+        return vector_dict, all_ports
+    
+    def _read_codebook_v2(self,file_name):
+        
+        full_path_mapping_file = os.path.abspath(file_name)
+        base_dir, file_name_only = os.path.split(full_path_mapping_file)
+        
+        
+        #file_name  = 'Beam_ID_PD_char_codebook_mapping.csv'
+        #full_path_mapping_file = f'{path}{file_name}'
 
-        self.port_names_in_codebook = list(set(all_ports))
-        self.input_vector = vector_dict
-        self.beam_ids = sorted(self.input_vector.keys())
+        all_ports = []
+        file_mapping_dict = {}
+        beam_pair_mapping = {}
+        with open(full_path_mapping_file) as csvfile:
+            header = csvfile.readline()
+            header = header.replace(" ","").replace("\n","")
+            header = header.split(',')
+            
+            reader = csv.DictReader(csvfile,fieldnames=tuple(header))
+            if 'Beam_ID' not in header:
+                pass #need to add in format checking for codebook
+            vector_dict = {}
+            for row in reader: #each row will corropsond to a beam id
+                temp_dict = {}
+                beamid = row['Beam_ID']
+                if '_' in beamid: #this is the beam pair
+                    pair = beamid.split('_')
+                    beam_pair_mapping[int(pair[0])] = int(pair[1])
+                    beam_pair_mapping[int(pair[1])] = int(pair[0])
+                else: #it is not the row that describes a pair
+                    temp_dict['Beam_ID'] =beamid
+                    codebook_file = row['PD_Char_Codebook_name']
+                    temp_dict['FileName'] = codebook_file   
+                    if 'Module' in codebook_file: #not sure if this syntax is always the same, but will assume it is
+                        module_id = codebook_file.split('_')[1] #need to check if this is always the case
+                    else:
+                        module_id = '0' 
+                    temp_dict['Module_Name'] = f'module{module_id}'
+                    file_mapping_dict[int(beamid)] = temp_dict
+                
 
-        #list of all beams that are unique, if a beam has a beam pair, no need to calculate
-        #PD again for the second time it shows up in the list. For example if
-        #beam 1 is paired with beam 8. Then we only need to add the fields for
-        #beam1 and beam 8, and store it under beam 1. When beam 8 shows up again
-        #in the codebook, we will just ignore it. This assumes that all beams
-        #and pairs are reciprocal
-        self.unique_beams = list(self.input_vector.keys()) #start with all beams
-        for idx in self.unique_beams:
-            pair_idx = self.input_vector[idx]['Beam_Pair']
-            if pair_idx!=-1:
-                if pair_idx in self.unique_beams:
-                    self.unique_beams.remove(pair_idx)
+        for beam_id in file_mapping_dict:
+            if beam_id in beam_pair_mapping.keys():
+                file_mapping_dict[beam_id]['Beam_ID_Pair'] = beam_pair_mapping[beam_id]
+            else:
+                file_mapping_dict[beam_id]['Beam_ID_Pair'] = -1
+                
+        
 
-
-        self.aedtapp = aedtapp
-        path, filename = os.path.split(file_name)
-        filename = filename.replace(".csv","")
-        self.name = filename
-
+        vector_dict  = {}
+        for beam_id in file_mapping_dict:
+            temp_dict = {}
+            file_name = file_mapping_dict[beam_id]['FileName']
+            full_path_source_file = os.path.join(base_dir,file_name)
+            temp_dict['Beam_Pair'] = file_mapping_dict[beam_id]['Beam_ID_Pair']
+            temp_ports = {}
+            with open(full_path_source_file) as csvfile:
+                header = csvfile.readline()
+                header = header.replace(" ","").replace("\n","")
+                header = header.split(',')        
+                reader = csv.DictReader(csvfile,fieldnames=tuple(header))       
+                for row in reader: #each row will corropsond to a beam id
+                    mag_phase_temp = {}      
+                    mag_phase_temp['mag'] = float(row['Magnitude'].replace('W','').replace(' ',''))
+                    mag_phase_temp['phase']  = float(row['Phase'].replace('deg','').replace(' ',''))
+                    port_name = row['Source'].split(':')[0] #remove :, which is the mode number, assuming single mode ports
+                    temp_ports[port_name] = mag_phase_temp
+                    all_ports.append(port_name)
+                temp_dict['ports'] = temp_ports
+                temp_dict['Module_Name'] = file_mapping_dict[beam_id]['Module_Name']
+                vector_dict[beam_id] = temp_dict
+                
+        return vector_dict, all_ports
+    
     def build_edit_sources_array(self,name_array,mag_array,phase_array):
         '''
         Builds an array that is used as in input into HFSS edit sources. The 
