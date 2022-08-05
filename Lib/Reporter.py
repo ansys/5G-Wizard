@@ -66,7 +66,12 @@ class Report_Module():
 
 
         fig, ax = plt.subplots()
-        ax.plot(beam_ids,pd_max_vals)
+        ax.plot(pd_max_vals)
+        
+        a = np.arange(len(beam_ids))
+        ax.xaxis.set_ticks(a) #set the ticks to be a
+        ax.xaxis.set_ticklabels(beam_ids) # change the ticks' names to x
+        
         
         ax.set(xlabel='Beam IDs', ylabel=pd_type_label,
                title=title)
@@ -584,6 +589,7 @@ class Report_Module():
 
         data=fields_data.p_avg_all_beams[0]
         beam_ids = list(fields_data.p_avg_all_beams.keys())
+        beam_by_continuous_idx = np.arange(len(beam_ids))
         xyz = []
         for xn in range(fields_data.pos_in_global.shape[0]):
             for yn in range(fields_data.pos_in_global.shape[1]):
@@ -608,14 +614,21 @@ class Report_Module():
 
         p.add_mesh(pd_surface,smooth_shading=True,cmap="jet",opacity=0.5,name='PD')
                 
-        first_beam = np.min(beam_ids)
-        last_beam = np.max(beam_ids)
+        first_beam = 0
+        last_beam = len(beam_ids)
         beam_text = p.add_text("Beam ID: 0", position='lower_left', font_size=18, color=None)
         #depending on slider bar position, update fields plot
+        all_fields_list = []
+        all_beams_list = []
+        for each in fields_data.p_avg_all_beams:
+            all_fields_list.append(fields_data.p_avg_all_beams[each])
+            all_beams_list.append(each)
+        
+        
         def beam_select(value=1):
-            beam_select = str(int(value)) #slider doesn't allow discrete values
+            beam_select = str(all_beams_list[int(value)]) #slider doesn't allow discrete values
             p.remove_actor('PD')
-            mag = np.ndarray.flatten(fields_data.p_avg_all_beams[int(value)],order='C')
+            mag = np.ndarray.flatten(all_fields_list[int(value)],order='C')
             fields_mesh[str(beam_ids[0])] = mag
             pd_surface = fields_mesh.delaunay_2d()
             p.add_mesh(pd_surface,smooth_shading=True,cmap="jet",opacity=0.5,name='PD')
@@ -694,7 +707,7 @@ class Report_Module():
             file_name =  self.get_new_file_name()
             p.screenshot(file_name)
             p.view_isometric()
-            for beam in beam_ids:
+            for beam in beam_by_continuous_idx:
                 beam_select(beam)
                 file_name =  self.get_new_file_name()
                 self.all_figure_paths.append(file_name)

@@ -36,14 +36,14 @@ def run_pd(aedtapp,selected_project,selected_design):
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
         #codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
-        #codebook_path = './example_projects/CodebookExample_Hpol.csv'
-        codebook_path = 'C:\\Users\\asligar\\Downloads\\96a500f8-2147-4f9e-bca9-2caecc87a45a\\Band_260\\PD_Char\\Beam_ID_PD_char_codebook_mapping.csv'
-        selected_eval_surf = '50mm_Surface'
+        codebook_path = './example_projects/CodebookExample_Hpol.csv'
+        #codebook_path = 'C:\\Users\\asligar\\Downloads\\96a500f8-2147-4f9e-bca9-2caecc87a45a\\Band_260\\PD_Char\\Beam_ID_PD_char_codebook_mapping.csv'
+        selected_eval_surf = '5mm_Surface'
         selected_area = '1cm^2' #area in cm^2 as a string
         selected_pd_type = 'PD_n_plus'
         renormalize = False
         renorm_values= [1,.5,1,.5,.1]
-    
+        wizard.ignore_beampair = True
         wizard.freq = selected_freq
         wizard.project_name = selected_project
         wizard.design_name = selected_design
@@ -75,6 +75,7 @@ def run_cdf(aedtapp,selected_project,selected_design):
         renorm_value= 10
         
         codebook_path = './example_projects/CodebookExample_Hpol.csv'
+        #codebook_path = 'C:\\Users\\asligar\\Downloads\\96a500f8-2147-4f9e-bca9-2caecc87a45a\\Band_260\\PD_Char\\Beam_ID_PD_char_codebook_mapping.csv'
 
         cs_name = 'Global'
         
@@ -99,12 +100,12 @@ def run_validate():
 
 if __name__ == '__main__':
     selected_project = '5G_28GHz_AntennaModule'
-    selected_design = '4x1_array4'
+    selected_design = '4x1_array1'
     #with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
     with Hfss(selected_project,selected_design,non_graphical=False, new_desktop_session=False,specified_version=version) as aedtapp:
 
-        wizard_pd = run_pd(aedtapp,selected_project,selected_design)
-        #wizard_cdf = run_cdf(aedtapp,selected_project,selected_design)
+        #wizard_pd = run_pd(aedtapp,selected_project,selected_design)
+        wizard_cdf = run_cdf(aedtapp,selected_project,selected_design)
 
 
     #run_validate()

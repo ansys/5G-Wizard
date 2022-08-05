@@ -91,13 +91,16 @@ class Load_NF_Fields():
         self.num_samples = len(pos)
         self.solution_type = 'DrivenModal'
         self.unique_beams = None
+        self.all_beams = None
+        self.ignore_beampair = False
         self.renormalize = False
         self.prad= []
         self.renorm_values= []
 
         self.valid_nfd = valid_nfd
         
-    def combine_fields(self,vector,reshape=None,relative_phase_beam_id=0):
+    def combine_fields(self,vector,reshape=None,
+                       relative_phase_beam_id=0):
         '''
         Performs superposition of all the near fields based on the codebook
         values for mag/phase.
@@ -116,6 +119,8 @@ class Load_NF_Fields():
             beam and its beam pair, we can set this here. In some instances, a 
             very conservative estimage of max PD is made by looking at the max
             PD even across all possible relative beam pair phases. The default is 0.
+        eval_all_beams_including_pair: bol, optional
+            we can evaluate beam pair combindation, and also inclue the indivudal beams
 
         Returns
         -------
@@ -130,10 +135,14 @@ class Load_NF_Fields():
 
         self.data_dict_combined = {}
         if self.unique_beams!=None:
-            beams_to_eval = self.unique_beams
+            if self.ignore_beampair:
+                beams_to_eval = self.all_beams
+            else:
+                beams_to_eval = self.unique_beams
         else:
             beams_to_eval = list(vector.keys())
-            
+        self.beams_evaluated = beams_to_eval
+        self.beam_pairs_evaluated = [] #used to keep track of which beam pair is used
         if self.renormalize:
             if isinstance(self.renorm_values, str):
                 if 'w' in self.renorm_values.lower():
@@ -177,7 +186,12 @@ class Load_NF_Fields():
                 port_weight_cmplx = np.sqrt(port_weight_mag)*np.exp(1j*port_weight_phase)
                 beam_total_field_e +=  port_weight_cmplx*self.data_dict[port]['E']
                 beam_total_field_h +=  port_weight_cmplx*self.data_dict[port]['H']
-            if beam_pair_id!=-1:
+            if beam_pair_id==-1:
+                self.beam_pairs_evaluated.append(beam_pair_id)
+            elif self.ignore_beampair==True:
+                self.beam_pairs_evaluated.append(-1)
+            else:
+                self.beam_pairs_evaluated.append(beam_pair_id)
                 ports_in_beam_pair = list(vector[beam_pair_id]['ports'].keys())
                 for port in ports_in_beam_pair:
                     port_weight_mag = vector[beam_pair_id]['ports'][port]['mag']
@@ -186,6 +200,8 @@ class Load_NF_Fields():
                     port_weight_cmplx = np.sqrt(port_weight_mag)*np.exp(1j*port_weight_phase)
                     beam_total_field_e +=  port_weight_cmplx*self.data_dict[port]['E']
                     beam_total_field_h +=  port_weight_cmplx*self.data_dict[port]['H']
+
+                
             poynting = 0.5*np.cross(beam_total_field_e,beam_total_field_h.conjugate())
             
             if self.renormalize:
@@ -207,7 +223,7 @@ class Load_NF_Fields():
                     print('Unable to reshape fields, verify that field files are current and updated')
             self.data_dict_combined[beam] = {'E':beam_total_field_e,'H':beam_total_field_h,'P':poynting,'pos':self.pos}
             
-        print("Unique Beams: " + str(self.unique_beams) + ", including Beam Pairs with each unique beam")
+        print(f'Beams Evalulated:{beams_to_eval}')
         return self.data_dict_combined
     
     
@@ -371,7 +387,7 @@ class Load_NF_Fields():
         p_avg_all_beams = {}
 
         if self.unique_beams!=None:
-            beams_to_eval = self.unique_beams
+            beams_to_eval = self.beams_evaluated
         else:
             beams_to_eval = list(pd.keys())
         for beam_id in beams_to_eval: #for each beam id in all beam ids

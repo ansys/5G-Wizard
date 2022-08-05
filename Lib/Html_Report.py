@@ -57,7 +57,7 @@ class Html_Writer():
         
         design_info_dict = self.get_design_info(data['JobID'])
         title = 'Power Density Summary Report: ' + design_info_dict['Design_Name']
-        beam_ids =list(data['PD_Max'].keys())
+        beam_ids =data['BeamID']
         if 'Module_Name' in data.keys():
             headings_pd_summary = ('Project_Name','Design_Name','Solution_Name','Codebook_Name','PD_Type','EvalSurface','Averaging_Area','Freq','Renormalized PD','Module_Name')
         else:
@@ -80,9 +80,9 @@ class Html_Writer():
         
         
         if data['Renormalized PD']==True:
-            headings_pd_vals = ('BeamID','PD_Max','IncidentPower','AcceptedPower','RadiatedPower','RadiatedPower_NoRenorm','PeakRealizedGain')
+            headings_pd_vals = ('BeamID','Beam_PairID','PD_Max','IncidentPower','AcceptedPower','RadiatedPower','RadiatedPower_NoRenorm','PeakRealizedGain')
         else:
-            headings_pd_vals = ('BeamID','PD_Max','IncidentPower','AcceptedPower','RadiatedPower','PeakRealizedGain')
+            headings_pd_vals = ('BeamID','Beam_PairID','PD_Max','IncidentPower','AcceptedPower','RadiatedPower','PeakRealizedGain')
             
         data_pd_vals_all = []
         for idx, beam_id in enumerate(beam_ids):
@@ -90,11 +90,16 @@ class Html_Writer():
             for heading in headings_pd_vals:
                 if heading=='BeamID':
                     data_pd_vals_row.append(beam_id)
+                elif heading=='Beam_PairID':
+                    val = data['Beam_PairID'][idx]
+                    if val == -1:
+                        val='None'
+                    data_pd_vals_row.append(val)
                 elif type(data[heading])==dict:
-                    val = np.round(data[heading][beam_id],2)
+                    val = np.round(data[heading][beam_id],5)
                     data_pd_vals_row.append(val)
                 else:
-                    val = np.round(data[heading][idx],2)
+                    val = np.round(data[heading][idx],5)
                     data_pd_vals_row.append(val)
             data_pd_vals_row = tuple(data_pd_vals_row)
             data_pd_vals_all.append(data_pd_vals_row)
@@ -120,6 +125,7 @@ class Html_Writer():
                                                              all_images=all_images)
         # lets write the substitution to a file
         with open(outputfile,'w') as f: f.write(subs)
+        print(f"INFO: Summary report written to {outputfile}")
         #all_job_folders = self.get_jobs()
         
     def generate_html_cdf(self,data,multirun_file = ''):

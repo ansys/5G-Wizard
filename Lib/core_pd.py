@@ -8,22 +8,22 @@ Created on Thu Sep  2 13:56:36 2021
 # Standard Python Module Imports
 import os
 import sys
-import json
-import numpy as np
+#import json
+#import numpy as np
 from Lib.Codebook import Codebook_Utils
 from Lib.NearField_Setup import NearField_Utils
 from Lib.FarField_Setup import FarField_Utils
 from Lib.NearFieldsProcessing import Load_NF_Fields
-from Lib.FarFieldsProcessing import Load_FF_Fields
-from Lib.FarFieldsProcessing import envelope_pattern_all_jobs
+#from Lib.FarFieldsProcessing import Load_FF_Fields
+#from Lib.FarFieldsProcessing import envelope_pattern_all_jobs
 from Lib.Reporter import Report_Module
 from Lib.MultiSetup import Read_Multi_Setup
-from Lib.CreateReports_in_AEDT import AEDT_CreateReports
+#from Lib.CreateReports_in_AEDT import AEDT_CreateReports
 from Lib.Html_Report import Html_Writer
 import Lib.Utillities as utils
 
 from pyaedt import Hfss
-from pyaedt import Desktop
+#from pyaedt import Desktop
 #from AEDTLib.HFSS import HFSS
 #from AEDTLib.Desktop import Desktop
 print(sys.path)
@@ -47,6 +47,7 @@ class PD():
         self.multirun_state = False
         self.multi_setup_file_path = ''
         self.freq = 28e9
+        self.ignore_beampair = False
         
         self.project_name = ''
         self.design_name = ''
@@ -237,10 +238,16 @@ class PD():
             farfield_setup = FarField_Utils(self.aedtapp)
             farfield_setup.insert_infinite_sphere()
             
-    
-            for beam_id in codebook.unique_beams:
+            if self.ignore_beampair:
+                beams_to_eval = codebook.all_beams
+                hfss_var_beam = 'false'
+            else:
+                beams_to_eval = codebook.unique_beams
+                hfss_var_beam = 'true'
+            for beam_id in beams_to_eval:
                 print('Calculating Far Field Quantities for Beam ' + str(beam_id))
                 codebook.add_or_edit_variable('beamID',beam_id)
+                codebook.add_or_edit_variable('UseBeamPair',hfss_var_beam)
                 ant_param_dict[beam_id] = farfield_setup.get_antenna_parameters(setup_name,
                                                                        farfield_setup.name,
                                                                        freq)
@@ -257,7 +264,7 @@ class PD():
             radiated_power = []
             accepted_power = []
             incident_power = []
-            for b in codebook.unique_beams:
+            for b in beams_to_eval:
                 peak_directivity.append(ant_param_dict[b]['PeakDirectivity'])
                 peak_gain.append(ant_param_dict[b]['PeakGain'])
                 peak_realized_gain.append(ant_param_dict[b]['PeakRealizedGain'])
@@ -300,7 +307,7 @@ class PD():
 
 
             overriding_renorm_values = []
-            for each in codebook.unique_beams:
+            for each in beams_to_eval:
                 if 'Prad_Renorm' in codebook.input_vector[each].keys():
                     overriding_renorm_values.append(codebook.input_vector[each]['Prad_Renorm'])
                     override_renorm_from_codebook = True
@@ -320,9 +327,11 @@ class PD():
 
             #because PD is going to be equivlant for beam pairs
             #for example Beam1 with Beam5 as as pair is teh same as Beam 5 with Beam 1 as a pair
+            fields_data.ignore_beampair=self.ignore_beampair
             fields_data.unique_beams = codebook.unique_beams
-            #recombine fields based on steering vector (codebook.input_vector)
-            
+            fields_data.all_beams = codebook.all_beams                
+                
+            #recombine fields based on steering vector (codebook.input_vector) 
             results = fields_data.combine_fields(codebook.input_vector,
                                                  reshape=[nearfield_setup.width_n,nearfield_setup.length_n])
             
@@ -367,7 +376,7 @@ class PD():
             #get a list of module name if defined in the codebook, just used for
             #labeling teh data later
             module_name_list = []
-            for each in codebook.unique_beams:
+            for each in beams_to_eval:
                 if 'Module_Name' in codebook.input_vector[each].keys():
                     module_name_list.append(codebook.input_vector[each]['Module_Name'])
                     
@@ -380,7 +389,9 @@ class PD():
                            'PD_Max':pd_max,
                            'PD_Type':pd_type,
                            'Paths_To_Raw_Data':output_rawdata_dict,
-                           'Paths_To_Avg_Data':output_avgdata_dict}
+                           'Paths_To_Avg_Data':output_avgdata_dict,
+                           'BeamID':fields_data.beams_evaluated,
+                           'Beam_PairID':fields_data.beam_pairs_evaluated}
             
             if len(module_name_list)==len(pd_max):
                 pd_max_dict['Module_Name'] = module_name_list

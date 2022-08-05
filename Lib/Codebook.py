@@ -13,6 +13,9 @@
 import csv
 import os
 import sys
+from collections import OrderedDict
+
+
 class Codebook_Utils():
     def __init__(self,aedtapp,file_name):
         '''
@@ -69,6 +72,7 @@ class Codebook_Utils():
         #in the codebook, we will just ignore it. This assumes that all beams
         #and pairs are reciprocal
         self.unique_beams = list(self.input_vector.keys()) #start with all beams
+        self.all_beams = list(self.input_vector.keys())
         for idx in self.unique_beams:
             pair_idx = self.input_vector[idx]['Beam_Pair']
             if pair_idx!=-1:
@@ -223,7 +227,7 @@ class Codebook_Utils():
                 temp_dict['ports'] = temp_ports
                 temp_dict['Module_Name'] = file_mapping_dict[beam_id]['Module_Name']
                 vector_dict[beam_id] = temp_dict
-                
+        vector_dict = OrderedDict(sorted(vector_dict.items()))       
         return vector_dict, all_ports
     
     def build_edit_sources_array(self,name_array,mag_array,phase_array):

@@ -11,7 +11,7 @@ from Lib.core_pd import PD
 from Lib.core_cdf import CDF
 from Lib.Populate_GUI import GUI_Values
 from PySide6.QtWidgets import QMainWindow, QApplication, QWidget,QInputDialog, QHBoxLayout, QVBoxLayout, QDialog,QFileDialog,QCheckBox, QCommandLinkButton
-from gui_v02 import Ui_Dialog
+from gui_v03 import Ui_Dialog
 
 from Validation import Validate_Reference_Data
 #from AEDTLib.HFSS import HFSS
@@ -62,7 +62,7 @@ class MainWindow(QDialog):
 
         
         #uic.loadUi('gui_v0.ui',self)
-        self.setWindowTitle("Ansys 5G Wizard v0.2: AEDT 2022.1")
+        self.setWindowTitle("Ansys 5G Wizard v0.3: AEDT 2022.2")
 
         self.ui.project_name_input.clear()
         self.ui.project_name_input.addItems(project_names)
@@ -278,7 +278,6 @@ class MainWindow(QDialog):
         self.ui.output_text_path.setText(folderpath)
             
     def multirun_state(self,state):
-        print(state)
         if state.isChecked():
             self.multi_run_enabled = True
             self.ui.multirun_group.setEnabled(True)
@@ -293,7 +292,7 @@ class MainWindow(QDialog):
             self.ui.pd_setup_group.setEnabled(True)
             self.ui.cdf_setup_group.setEnabled(True)
             self.ui.solution_select_group.setEnabled(True)
-        
+            
     def browse_multi_run(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -357,7 +356,13 @@ class MainWindow(QDialog):
             selected_freq = float(self.ui.freq_input.currentText())
             
             codebook_path = str(self.ui.codebook_text.text())
+            
 
+            if self.ui.ignore_beampair.isChecked():
+                ignore_beampair = True
+            else:
+                ignore_beampair= False
+            
             selected_eval_surf = str(self.ui.eval_surf_input.currentText())
             selected_area = str(self.ui.pd_area_input.currentText())
             selected_pd_type = str(self.ui.pd_type_input.currentText())
@@ -369,7 +374,7 @@ class MainWindow(QDialog):
             if selected_pd_renorm != "None":
                 pd_renorm = True
                 renorm_values = selected_pd_renorm
-
+            wizard.ignore_beampair = ignore_beampair
             wizard.freq = selected_freq
             wizard.project_name = selected_project
             wizard.design_name = selected_design
