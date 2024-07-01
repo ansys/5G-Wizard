@@ -12,9 +12,13 @@ class GUI_Values():
     def get_app(self):
         return self.aedtapp
     def get_project_names(self,):
-        return list(self.aedtapp.odesktop.GetProjectList())
+        return list(self.aedtapp.project_list())
     def get_design_names(self,project_name):
-        design_list = self.aedtapp.design_list
+        if hasattr(self.aedtapp,'design_list'):
+            if not isinstance(self.aedtapp.design_list, list):
+                design_list = self.aedtapp.design_list()
+            else:
+                design_list = self.aedtapp.design_list
         if len(design_list)==0:
             design_list = 'No Valid Designs'
         return design_list
