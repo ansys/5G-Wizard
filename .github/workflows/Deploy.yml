@@ -10,8 +10,8 @@ defaults:
     shell: bash
 
 env:
-  python-version: "3.8"
-  pyinstaller-version: "5.2"
+  python-version: "3.10"
+  pyinstaller-version: "6.8"
   project-name: 5G-Wizard
 
 jobs:
