@@ -10,8 +10,8 @@ from Lib.core_cdf import CDF
 import Lib.Utillities as utils
 import os
 import pyaedt 
-from pyaedt import Hfss
-from pyaedt import Desktop
+# from pyaedt import Hfss
+# from pyaedt import Desktop
 from Validation import Validate_Reference_Data
 
 version_file = 'aedt_version.txt'
@@ -70,11 +70,11 @@ def run_cdf(aedtapp,selected_project,selected_design):
         selected_design = selected_design
         selected_setup = "Setup1:LastAdaptive"
         selected_freq = 28e9
-        renormalize = False
+        renormalize = True
         renormalize_dB = True
-        renorm_value= 10
+        renorm_value= 0
         
-        codebook_path = './example_projects/CodebookExample_Hpol.csv'
+        codebook_path = './example_projects/CodebookExample_Hpol_Renormalize.csv'
         #codebook_path = 'C:\\Users\\asligar\\Downloads\\96a500f8-2147-4f9e-bca9-2caecc87a45a\\Band_260\\PD_Char\\Beam_ID_PD_char_codebook_mapping.csv'
 
         cs_name = 'Global'
@@ -102,10 +102,10 @@ if __name__ == '__main__':
     selected_project = '5G_28GHz_AntennaModule'
     selected_design = '4x1_array1'
     #with Desktop(specified_version=version,new_desktop_session =False,close_on_exit =False):
-    with Hfss(selected_project,selected_design,non_graphical=False, new_desktop_session=False,specified_version=version) as aedtapp:
-
-        #wizard_pd = run_pd(aedtapp,selected_project,selected_design)
-        wizard_cdf = run_cdf(aedtapp,selected_project,selected_design)
+    # with Hfss(selected_project,selected_design,non_graphical=False, new_desktop_session=False,specified_version=version) as aedtapp:
+    aedtapp = pyaedt.Hfss(project=selected_project,design=selected_design,version=version,non_graphical=False,new_desktop=False)
+    # wizard_pd = run_pd(aedtapp,selected_project,selected_design)
+    wizard_cdf = run_cdf(aedtapp,selected_project,selected_design)
 
 
     #run_validate()

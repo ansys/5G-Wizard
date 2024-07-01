@@ -101,7 +101,7 @@ class MainWindow(QDialog):
         self.ui.validation_button.clicked.connect(self.run_validation_button)
 
     def activate_project(self,project_name,desig_name=None):
-        self.aedtapp = pyaedt.Hfss(project_name,designname=desig_name,specified_version=version)
+        self.aedtapp = pyaedt.Hfss(project=project_name,design=desig_name,specified_version=version)
         print('project changed: ' + project_name)
         self.gui_params = GUI_Values(self.aedtapp)
     def project_name_changed(self):
@@ -448,10 +448,11 @@ class MainWindow(QDialog):
         validation = Validate_Reference_Data()
         validation_results = validation.run()
 if __name__ == '__main__':
-    with Desktop( specified_version=version,new_desktop_session =False,close_on_exit =False) as d:
-        project_list = d.project_list()
-        design_list = d.design_list(project_list[0])
-        aedtapp = Hfss(project_list[0],design_list[0],specified_version=version)
+    # with Desktop( specified_version=version,new_desktop_session =False,close_on_exit =False) as d:
+    #     project_list = d.project_list()
+    #     design_list = d.design_list(project_list[0])
+    #     # aedtapp = Hfss(project_list[0],design_list[0],specified_version=version)
+    aedtapp = pyaedt.Desktop(version=version, non_graphical=False, new_desktop=False)
     app = QApplication(sys.argv)
     myApp = MainWindow(aedtapp)
     myApp.show()

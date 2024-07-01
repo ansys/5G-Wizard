@@ -22,9 +22,9 @@ from Lib.MultiSetup import Read_Multi_Setup
 from Lib.Html_Report import Html_Writer
 from Lib.CreateReports_in_AEDT import AEDT_CreateReports
 import Lib.Utillities as utils
-
-from pyaedt import Hfss
-from pyaedt import Desktop
+import pyaedt
+# from pyaedt import Hfss
+# from pyaedt import Desktop
 #from AEDTLib.HFSS import HFSS
 #from AEDTLib.Desktop import Desktop
 print(sys.path)
@@ -44,7 +44,7 @@ class CDF():
     def __init__(self,aedtapp,output_path = './output/'):
         print('Calculating CDF...')
         self.aedtapp = aedtapp
-        self.version = '2021.2'
+        self.version = '2024.1'
         self.multirun_state = False
         self.multi_setup_file_path = ''
         self.freq = 28e9
@@ -78,7 +78,6 @@ class CDF():
                                         self.current_updatereports_state)
         
     def run_cdf(self,projectname = '5G_28GHz_AntennaModule'):
-
 
         
         #get current state of autosave, will restore after script completes
@@ -133,15 +132,31 @@ class CDF():
             
             selected_project = jobs[job]['Project_Name']
             selected_design = jobs[job]['Design_Name']
-            if selected_project not in self.aedtapp.project_list:
-                print('ERROR: Project ' + selected_project + 'Does Not Exist')
-                return False
-            if selected_design not in self.aedtapp.design_list:
-                print('ERROR: Design ' + selected_design + 'Does Not Exist')
-                return False
+            if isinstance(self.aedtapp.project_list,list):
+                if selected_project not in self.aedtapp.project_list:
+                    print('ERROR: Project ' + selected_project + 'Does Not Exist')
+                    return False
+            else:
+                if selected_project not in self.aedtapp.project_list():
+                    print('ERROR: Project ' + selected_project + 'Does Not Exist')
+                    return False
+            if isinstance(self.aedtapp.design_list, list):
+                if selected_design not in self.aedtapp.design_list:
+                    print('ERROR: Design ' + selected_design + 'Does Not Exist')
+                    return False
+            else:
+                if selected_design not in self.aedtapp.design_list():
+                    print('ERROR: Design ' + selected_design + 'Does Not Exist')
+                    return False
             
-            self.aedtapp = Hfss(jobs[job]['Project_Name'],selected_design,specified_version=self.version)
-            self.aedtapp.set_active_design(selected_design)
+            # self.aedtapp = Hfss(jobs[job]['Project_Name'],selected_design,specified_version=self.version)
+            self.aedtapp = pyaedt.Hfss(project=selected_project,
+                                          design=selected_design,
+                                          version=self.version,
+                                          non_graphical=False,
+                                          new_desktop=False,
+                                          close_on_exit=False)
+            # self.aedtapp.active_design(selected_design)
             print('Active Design: ' + selected_design)
             self.solution_type = self.aedtapp.solution_type
             freq = jobs[job]['Freq']
